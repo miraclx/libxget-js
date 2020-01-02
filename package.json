@@ -1,7 +1,7 @@
 {
   "name": "libxget",
   "version": "0.0.1",
-  "description": "Chunk-based requests for faster streams",
+  "description": "Non-interractive, chunk-based, web content retriever",
   "main": "dist/index.js",
   "types": "typings/index.d.ts",
   "scripts": {

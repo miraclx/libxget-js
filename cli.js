@@ -46,7 +46,7 @@ const command = commander
   .name('xget')
   .usage('[options] <url> [outputFile]')
   .arguments('<url> [outputFile]')
-  .description('Non-interractive, chunk-based, web content retriever')
+  .description(packageJson.description)
   .option('-n, --chunks <N>', 'set number of concurrent chunk streams to N', 5)
   .option('-c, --continue', 'resume getting a partially downloaded file')
   .option('-t, --tries <N>', 'set number of retries for each chunk to N', 5)
@@ -68,7 +68,6 @@ const command = commander
 function main(argv) {
   if (!argv.includes('-v')) {
     log(`libxget v${packageJson.version} - (c) ${packageJson.author}`);
-    log('\u2022', packageJson.description);
     log('-----------------------------------------------------------------------------------------');
     if (!argv.slice(2).filter(v => v !== '-').length) commander.outputHelp();
   }
