@@ -5,7 +5,9 @@ const path = require('path');
 const util = require('util');
 
 const commander = require('commander');
+const xprogress = require('xprogress');
 
+const xget = require('.');
 const packageJson = require('./package.json');
 
 const [log, error] = [, ,].fill(
@@ -40,6 +42,48 @@ function processArgs(_url, outputFile, options) {
   log(`Show Progress:`, options.bar);
   log(`Pulsate Bar:`, options.pulsateBar);
   log(`Single Bar:`, options.singleBar);
+  const opts = {
+    chunks: options.chunks,
+    timeout: 15000,
+    retries: options.tries,
+    with: {
+      progressBar({size, chunkStack}) {
+        return xprogress.stream(
+          size,
+          chunkStack.map(chunk => chunk.size),
+          {
+            label: outputFile,
+            forceFirst: chunkStack.length > 20,
+            length: 100,
+            pulsate: !Number.isFinite(size),
+            bar: {separator: '|', header: ''},
+            template: [
+              'Saving to: ‘:{label}’',
+              '•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})',
+              '•[:{bar}] [:{size}]',
+            ],
+            variables: {
+              size: (stack, _size, total) => (
+                (total = stack['size:total:raw']), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
+              ),
+            },
+          },
+        );
+      },
+    },
+    use: {
+      progressBar(dataSlice, store) {
+        return store.get('progressBar').next(dataSlice.size);
+      },
+    },
+  };
+
+  const request = xget(_url, opts)
+    .on('error', err => log(err))
+    .on('loaded', data => log(`File Size: ${data.size}`))
+    .on('end', () => request.store.get('progressBar').end(`Download Complete at ${request.bytesRead}\n`));
+
+  request.pipe(fs.createWriteStream(outputFile));
 }
 
 const command = commander
