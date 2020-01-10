@@ -29,6 +29,7 @@ function processArgs(_url, outputFile, options) {
   outputFile = (_path => path.join(options.directoryPrefix || '.', !options.directories ? path.basename(_path) : _path))(
     outputFile || (parsedUrl.pathname && parsedUrl.pathname === '/' ? 'index.html' : parsedUrl.pathname),
   );
+  options.verbose = options.verbose || false;
   options.continue = options.continue || false;
   options.singleBar = options.singleBar || false;
   options.pulsateBar = options.pulsateBar || false;
@@ -42,6 +43,8 @@ function processArgs(_url, outputFile, options) {
   log(`Show Progress:`, options.bar);
   log(`Pulsate Bar:`, options.pulsateBar);
   log(`Single Bar:`, options.singleBar);
+  log(`Verbose:`, options.verbose);
+  log();
   const opts = {
     chunks: options.chunks,
     timeout: 15000,
@@ -101,7 +104,8 @@ const command = commander
   .option('--pulsate-bar', 'show a pulsating bar')
   .option('--single-bar', 'show a single bar for the download, hide chunk-view [default when n(chunks) exceed printable space]')
   .option('-q, --quiet', 'hide credit banner')
-  .version(`v${packageJson.version}`, '-v, --version')
+  .option('-v, --verbose', 'be verbose')
+  .version(`v${packageJson.version}`, '-V, --version')
   // Add header config
   // Authentication
   // POST Request
