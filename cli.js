@@ -29,6 +29,9 @@ function processArgs(_url, outputFile, options) {
   outputFile = (_path => path.join(options.directoryPrefix || '.', !options.directories ? path.basename(_path) : _path))(
     outputFile || (parsedUrl.pathname && parsedUrl.pathname === '/' ? 'index.html' : parsedUrl.pathname),
   );
+  options.tries = parseInt(options.tries, 10);
+  options.chunks = parseInt(options.chunks, 10);
+  options.start_pos = parseInt(options.start_pos, 10);
   options.verbose = options.verbose || false;
   options.continue = options.continue || false;
   options.singleBar = options.singleBar || false;
