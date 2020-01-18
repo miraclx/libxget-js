@@ -106,7 +106,7 @@ const command = commander
   .option('--no-bar', "don't show the ProgressBar")
   .option('--pulsate-bar', 'show a pulsating bar')
   .option('--single-bar', 'show a single bar for the download, hide chunk-view [default when n(chunks) exceed printable space]')
-  .option('-q, --quiet', 'hide credit banner')
+  .option('-q, --quiet', 'be stealth')
   .option('-v, --verbose', 'be verbose')
   .version(`v${packageJson.version}`, '-V, --version')
   // Add header config
