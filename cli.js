@@ -118,8 +118,9 @@ const command = commander
 
 function main(argv) {
   if (!argv.includes('-v')) {
-    log(`libxget v${packageJson.version} - (c) ${packageJson.author}`);
-    log('-----------------------------------------------------------------------------------------');
+    const credits = `libxget v${packageJson.version} - (c) ${packageJson.author}`;
+    log(credits);
+    log('-'.repeat(credits.length));
     if (!argv.slice(2).filter(v => v !== '-').length) commander.outputHelp();
   }
   command.parse(argv);
