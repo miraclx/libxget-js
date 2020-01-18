@@ -31,7 +31,7 @@ function processArgs(_url, outputFile, options) {
       options.directoryPrefix || path.isAbsolute(_path) ? '/' : '.',
       !options.directories ? path.basename(_path) : _path,
     ))(outputFile || (parsedUrl.pathname && parsedUrl.pathname === '/' ? 'index.html' : parsedUrl.pathname));
-  options.tries = parseInt(options.tries, 10);
+  options.tries = options.infiniteRetries ? Infinity : parseInt(options.tries, 10);
   options.chunks = parseInt(options.chunks, 10);
   options.start_pos = parseInt(options.start_pos, 10);
   options.verbose = options.verbose || false;
@@ -103,6 +103,7 @@ const command = commander
   .option('-c, --continue', 'resume getting a partially downloaded file')
   .option('-t, --tries <N>', 'set number of retries for each chunk to N', 5)
   .option('-P, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
+  .option('-I, --infinite-retries', 'retry each chunk infinitely')
   .option('--start-pos <OFFSET>', 'start downloading from zero-based position OFFSET', 0)
   .option('--no-directories', "don't create directories")
   .option('--no-bar', "don't show the ProgressBar")
