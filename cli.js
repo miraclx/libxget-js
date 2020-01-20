@@ -55,39 +55,31 @@ function processArgs(_url, outputFile, options) {
     chunks: options.chunks,
     timeout: 15000,
     retries: options.tries,
-    with: {
-      progressBar({size, chunkStack}) {
-        return xprogress.stream(
-          size,
-          chunkStack.map(chunk => chunk.size),
-          {
-            label: outputFile,
-            forceFirst: chunkStack.length > 20,
-            length: 100,
-            pulsate: !Number.isFinite(size),
-            bar: {separator: '|', header: ''},
-            template: [
-              'Saving to: ‘:{label}’',
-              '•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})',
-              '•[:{bar}] [:{size}]',
-            ],
-            variables: {
-              size: (stack, _size, total) => (
-                (total = stack['size:total:raw']), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
-              ),
-            },
-          },
-        );
-      },
-    },
-    use: {
-      progressBar(dataSlice, store) {
-        return store.get('progressBar').next(dataSlice.size);
-      },
-    },
+    with: {},
+    use: {},
   };
 
   const request = xget(_url, opts)
+    .with('progressBar', ({size, chunkStack}) =>
+      xprogress.stream(
+        size,
+        chunkStack.map(chunk => chunk.size),
+        {
+          label: outputFile,
+          forceFirst: chunkStack.length > 20,
+          length: 100,
+          pulsate: !Number.isFinite(size),
+          bar: {separator: '|', header: ''},
+          template: ['Saving to: ‘:{label}’', '•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', '•[:{bar}] [:{size}]'],
+          variables: {
+            size: (stack, _size, total) => (
+              (total = stack['size:total:raw']), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
+            ),
+          },
+        },
+      ),
+    )
+    .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
     .on('error', err => log(err))
     .on('loaded', data => log(`File Size: ${data.size}`))
     .on('end', () => request.store.get('progressBar').end(`Download Complete at ${request.bytesRead}\n`));
