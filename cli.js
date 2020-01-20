@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require('fs');
 const tty = require('tty');
 const url = require('url');
