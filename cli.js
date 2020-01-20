@@ -81,6 +81,9 @@ function processArgs(_url, outputFile, options) {
     )
     .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
     .on('error', err => log(err))
+    .on('retry', ({index, retryCount, bytesRead, totalBytes, store}) =>
+      store.get('progressBar').print(`[@${index}] [Retries = ${retryCount}] [${bytesRead} / ${totalBytes}]`),
+    )
     .on('loaded', data => log(`File Size: ${data.size}`))
     .on('end', () => request.store.get('progressBar').end(`Download Complete at ${request.bytesRead}\n`));
 
