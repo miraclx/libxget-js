@@ -5,6 +5,7 @@ const url = require('url');
 const path = require('path');
 const util = require('util');
 
+const xbytes = require('xbytes');
 const commander = require('commander');
 const xprogress = require('xprogress');
 
@@ -56,7 +57,7 @@ function processArgs(_url, outputFile, options) {
     return;
   }
 
-  log(`url:`, _url);
+  log(`URL:`, _url);
   log(`outputFile:`, outputFile);
   log(`chunks:`, options.chunks);
   log(`resume:`, options.continue);
@@ -66,7 +67,6 @@ function processArgs(_url, outputFile, options) {
   log(`Pulsate Bar:`, options.pulsateBar);
   log(`Single Bar:`, options.singleBar);
   log(`Verbose:`, options.verbose);
-  log();
   const opts = {
     chunks: options.chunks,
     hash: options.hash,
@@ -76,41 +76,55 @@ function processArgs(_url, outputFile, options) {
     use: {},
   };
 
-  const request = xget(_url, opts)
-    .with('progressBar', ({size, chunkStack}) =>
-      xprogress.stream(
-        size,
-        chunkStack.map(chunk => chunk.size),
-        {
-          label: `File Size: :{total} (:{size:total})\nSaving to: ${outputFile}`,
-          forceFirst: options.singleBar || chunkStack.length > 20,
-          length: 40,
-          pulsate: options.pulsateBar || !Number.isFinite(size),
-          bar: {separator: '|', header: ''},
-          template: [
-            ':{label}',
-            ...(!options.singleBar
-              ? ['•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', '•[:{bar}] [:{size}]']
-              : ['•|:{bar}| [:3{percentage}%] [:{speed}] (:{eta}) [:{size}]', '']),
-          ],
-          variables: {
-            size: (stack, _size, total) => (
-              (total = stack['size:total:raw']), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
-            ),
+  const request = xget(_url, opts);
+
+  if (options.bar)
+    request
+      .with('progressBar', ({size, chunkStack}) =>
+        xprogress.stream(
+          size,
+          chunkStack.map(chunk => chunk.size),
+          {
+            label: `Length: :{total} (:{size:total})\nSaving to: ${outputFile}`,
+            forceFirst: options.singleBar || chunkStack.length > 20,
+            length: 40,
+            pulsate: options.pulsateBar || !Number.isFinite(size),
+            bar: {separator: '|', header: ''},
+            template: [
+              ':{label}',
+              ...(!options.singleBar
+                ? ['•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', '•[:{bar}] [:{size}]']
+                : ['•|:{bar}| [:3{percentage}%] [:{speed}] (:{eta}) [:{size}]', '']),
+            ],
+            variables: {
+              size: (stack, _size, total) => (
+                (total = stack['size:total:raw']), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
+              ),
+            },
           },
-        },
-      ),
-    )
-    .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
-    .on('error', err => log('cli>', err))
-    .on('retry', ({index, retryCount, bytesRead, totalBytes, store, lastErr}) =>
-      store.get('progressBar').print(`[@${index}] [Retries = ${retryCount}] [${bytesRead} / ${totalBytes}] ${lastErr.code}`),
-    )
-    .on('end', () => {
-      request.store
-        .get('progressBar')
-        .end([`• Download Complete at ${request.bytesRead}`, `• Hash: ${request.getHash('hex')}`, ''].join('\n'));
-    });
+        ),
+      )
+      .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
+      .on('loaded', ({chunkable, chunkStack}) => log(`Chunks: ${chunkable ? chunkStack.length : 1}`))
+      .on('retry', ({index, retryCount, bytesRead, totalBytes, store, lastErr}) =>
+        store.get('progressBar').print(`[@${index}] [Retries = ${retryCount}] [${bytesRead} / ${totalBytes}] ${lastErr.code}`),
+      )
+      .on('end', () => {
+        request.store
+          .get('progressBar')
+          .end([`• Download Complete at ${request.bytesRead}`, `• Hash: ${request.getHash('hex')}`, ''].join('\n'));
+      });
+  else
+    request
+      .on('loaded', ({size, chunkable, chunkStack}) => {
+        log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
+        log(`Length: ${size} (${xbytes(size)})`);
+        log(`Saving to: ${outputFile}...`);
+      })
+      .on('end', () => {
+        log(`• Download Complete at ${request.bytesRead}`);
+        log(`• Hash: ${request.getHash('hex')}`);
+      });
 
   request.pipe(fs.createWriteStream(outputFile));
 }
