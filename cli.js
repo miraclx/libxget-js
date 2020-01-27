@@ -96,7 +96,7 @@ function processArgs(_url, outputFile, options) {
       ),
     )
     .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
-    .on('error', err => log(err))
+    .on('error', err => log('cli>', err))
     .on('retry', ({index, retryCount, bytesRead, totalBytes, store, lastErr}) =>
       store.get('progressBar').print(`[@${index}] [Retries = ${retryCount}] [${bytesRead} / ${totalBytes}] ${lastErr.code}`),
     )
