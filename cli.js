@@ -27,7 +27,7 @@ const [log, error] = [, ,].fill(
 function processArgs(_url, outputFile, options) {
   const parsedUrl = url.parse(_url);
   if (!['protocol', 'hostname'].every(item => parsedUrl[item]))
-    console.log('\x1b[31m[i]\x1b[0m Please enter a valid URL'), process.exit(1);
+    error('\x1b[31m[i]\x1b[0m Please enter a valid URL'), process.exit(1);
   outputFile = (_path =>
     path.join(
       options.directoryPrefix || path.isAbsolute(_path) ? '/' : '.',
