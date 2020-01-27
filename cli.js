@@ -82,7 +82,7 @@ function processArgs(_url, outputFile, options) {
         size,
         chunkStack.map(chunk => chunk.size),
         {
-          label: outputFile,
+          label: `File Size: :{total} (:{size:total})\nSaving to: ${outputFile}`,
           forceFirst: chunkStack.length > 20,
           length: 40,
           pulsate: !Number.isFinite(size),
@@ -106,7 +106,6 @@ function processArgs(_url, outputFile, options) {
     .on('retry', ({index, retryCount, bytesRead, totalBytes, store, lastErr}) =>
       store.get('progressBar').print(`[@${index}] [Retries = ${retryCount}] [${bytesRead} / ${totalBytes}] ${lastErr.code}`),
     )
-    .on('loaded', data => log(`File Size: ${data.size}`))
     .on('end', () => {
       request.store
         .get('progressBar')
