@@ -83,7 +83,7 @@ function processArgs(_url, outputFile, options) {
         chunkStack.map(chunk => chunk.size),
         {
           label: `File Size: :{total} (:{size:total})\nSaving to: ${outputFile}`,
-          forceFirst: chunkStack.length > 20,
+          forceFirst: options.singleBar || chunkStack.length > 20,
           length: 40,
           pulsate: !Number.isFinite(size),
           bar: {separator: '|', header: ''},
@@ -91,7 +91,7 @@ function processArgs(_url, outputFile, options) {
             ':{label}',
             ...(!options.singleBar
               ? ['•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', '•[:{bar}] [:{size}]']
-              : ['•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta}) [:{size}]', '']),
+              : ['•|:{bar}| [:3{percentage}%] [:{speed}] (:{eta}) [:{size}]', '']),
           ],
           variables: {
             size: (stack, _size, total) => (
