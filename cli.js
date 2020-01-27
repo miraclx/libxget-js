@@ -69,6 +69,7 @@ function processArgs(_url, outputFile, options) {
   log();
   const opts = {
     chunks: options.chunks,
+    hash: options.hash,
     timeout: 15000,
     retries: options.tries,
     with: {},
@@ -101,7 +102,11 @@ function processArgs(_url, outputFile, options) {
       store.get('progressBar').print(`[@${index}] [Retries = ${retryCount}] [${bytesRead} / ${totalBytes}] ${lastErr.code}`),
     )
     .on('loaded', data => log(`File Size: ${data.size}`))
-    .on('end', () => request.store.get('progressBar').end(`Download Complete at ${request.bytesRead}\n`));
+    .on('end', () => {
+      request.store
+        .get('progressBar')
+        .end([`• Download Complete at ${request.bytesRead}`, `• Hash: ${request.getHash('hex')}`, '\n'].join('\n'));
+    });
 
   request.pipe(fs.createWriteStream(outputFile));
 }
@@ -114,6 +119,7 @@ const command = commander
   .option('-n, --chunks <N>', 'set number of concurrent chunk streams to N', 5)
   .option('-c, --continue', 'resume getting a partially downloaded file')
   .option('-t, --tries <N>', 'set number of retries for each chunk to N', 5)
+  .option('-h, --hash [algorithm]', 'calculate hash sum for the requested content using the specified algorithm', 'md5')
   .option('-P, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
   .option('-I, --infinite-retries', 'retry each chunk infinitely')
   .option('--start-pos <OFFSET>', 'start downloading from zero-based position OFFSET', 0)
