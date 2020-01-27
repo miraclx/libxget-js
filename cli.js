@@ -85,7 +85,7 @@ function processArgs(_url, outputFile, options) {
           label: `File Size: :{total} (:{size:total})\nSaving to: ${outputFile}`,
           forceFirst: options.singleBar || chunkStack.length > 20,
           length: 40,
-          pulsate: !Number.isFinite(size),
+          pulsate: options.pulsateBar || !Number.isFinite(size),
           bar: {separator: '|', header: ''},
           template: [
             ':{label}',
