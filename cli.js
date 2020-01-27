@@ -58,14 +58,9 @@ function processArgs(_url, outputFile, options) {
   }
 
   log(`URL:`, _url);
-  log(`outputFile:`, outputFile);
-  log(`chunks:`, options.chunks);
   log(`resume:`, options.continue);
   log(`max-retries:`, options.tries);
   log(`offset:`, options.startPos);
-  log(`Show Progress:`, options.bar);
-  log(`Pulsate Bar:`, options.pulsateBar);
-  log(`Single Bar:`, options.singleBar);
   log(`Verbose:`, options.verbose);
   const opts = {
     chunks: options.chunks,
