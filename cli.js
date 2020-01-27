@@ -112,7 +112,13 @@ function processArgs(_url, outputFile, options) {
       .on('end', () => {
         request.store
           .get('progressBar')
-          .end([`• Download Complete at ${request.bytesRead}`, `• Hash: ${request.getHash('hex')}`, ''].join('\n'));
+          .end(
+            [
+              `• Download Complete at ${request.bytesRead}`,
+              `• Hash(${request.getHashAlgorithm()}): ${request.getHash('hex')}`,
+              '',
+            ].join('\n'),
+          );
       });
   else
     request
@@ -123,7 +129,7 @@ function processArgs(_url, outputFile, options) {
       })
       .on('end', () => {
         log(`• Download Complete at ${request.bytesRead}`);
-        log(`• Hash: ${request.getHash('hex')}`);
+        log(`• Hash(${request.getHashAlgorithm()}): ${request.getHash('hex')}`);
       });
 
   request.pipe(fs.createWriteStream(outputFile));
