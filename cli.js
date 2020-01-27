@@ -126,6 +126,7 @@ function processArgs(_url, outputFile, options) {
         log(`• Hash(${request.getHashAlgorithm()}): ${request.getHash('hex')}`);
       });
 
+  request.on('error', err => log('cli>', err));
   request.pipe(fs.createWriteStream(outputFile));
 }
 
