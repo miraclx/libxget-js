@@ -9,6 +9,7 @@ const commander = require('commander');
 const xprogress = require('xprogress');
 
 const xget = require('.');
+const {XgetException} = require('./lib/xgetception');
 const packageJson = require('./package.json');
 
 const [log, error] = [, ,].fill(
