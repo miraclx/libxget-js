@@ -33,13 +33,28 @@ function processArgs(_url, outputFile, options) {
       options.directoryPrefix || path.isAbsolute(_path) ? '/' : '.',
       !options.directories ? path.basename(_path) : _path,
     ))(outputFile || (parsedUrl.pathname && parsedUrl.pathname === '/' ? 'index.html' : parsedUrl.pathname));
-  options.tries = options.infiniteRetries ? Infinity : parseInt(options.tries, 10);
-  options.chunks = parseInt(options.chunks, 10);
-  options.start_pos = parseInt(options.start_pos, 10);
-  options.verbose = options.verbose || false;
-  options.continue = options.continue || false;
-  options.singleBar = options.singleBar || false;
-  options.pulsateBar = options.pulsateBar || false;
+
+  function CHECK_FLAG_VAL(variable, flagref, untype) {
+    // eslint-disable-next-line valid-typeof
+    if (typeof variable !== untype)
+      if (parseFloat(variable).toString() !== variable)
+        throw new XgetException(`\`${flagref}\` if specified, must be given a valid \`${untype}\` datatype`);
+      else variable = parseInt(variable, 10);
+    return variable;
+  }
+
+  try {
+    options.tries = CHECK_FLAG_VAL(options.infiniteRetries ? Infinity : options.tries, '-t, --tries', 'number');
+    options.chunks = CHECK_FLAG_VAL(options.chunks, '-n, --chunks', 'number');
+    options.startPos = CHECK_FLAG_VAL(options.startPos, '--start-pos', 'number');
+    options.verbose = options.verbose || false;
+    options.continue = options.continue || false;
+    options.singleBar = options.singleBar || false;
+    options.pulsateBar = options.pulsateBar || false;
+  } catch (er) {
+    error('\x1b[31m[i]\x1b[0m', er.message);
+    return;
+  }
 
   log(`url:`, _url);
   log(`outputFile:`, outputFile);
