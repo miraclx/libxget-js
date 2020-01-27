@@ -87,7 +87,12 @@ function processArgs(_url, outputFile, options) {
           length: 40,
           pulsate: !Number.isFinite(size),
           bar: {separator: '|', header: ''},
-          template: ['Saving to: ‘:{label}’', '•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', '•[:{bar}] [:{size}]'],
+          template: [
+            ':{label}',
+            ...(!options.singleBar
+              ? ['•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', '•[:{bar}] [:{size}]']
+              : ['•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta}) [:{size}]', '']),
+          ],
           variables: {
             size: (stack, _size, total) => (
               (total = stack['size:total:raw']), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
