@@ -68,7 +68,7 @@ function processArgs(_url, outputFile, options) {
         {
           label: outputFile,
           forceFirst: chunkStack.length > 20,
-          length: 100,
+          length: 40,
           pulsate: !Number.isFinite(size),
           bar: {separator: '|', header: ''},
           template: ['Saving to: ‘:{label}’', '•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', '•[:{bar}] [:{size}]'],
