@@ -39,7 +39,7 @@
     "request": "^2.88.0",
     "stream.pipeline-shim": "^1.1.0",
     "streaming-cache": "^0.5.5",
-    "xprogress": "^0.13.0",
+    "xprogress": "^0.15.1",
     "xresilient": "^0.7.0"
   }
 }
