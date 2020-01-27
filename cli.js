@@ -109,7 +109,7 @@ function processArgs(_url, outputFile, options) {
     .on('end', () => {
       request.store
         .get('progressBar')
-        .end([`• Download Complete at ${request.bytesRead}`, `• Hash: ${request.getHash('hex')}`, '\n'].join('\n'));
+        .end([`• Download Complete at ${request.bytesRead}`, `• Hash: ${request.getHash('hex')}`, ''].join('\n'));
     });
 
   request.pipe(fs.createWriteStream(outputFile));
