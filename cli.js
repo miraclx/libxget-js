@@ -74,12 +74,14 @@ function processArgs(_url, outputFile, options) {
 
   if (options.bar)
     request
-      .with('progressBar', ({size, chunkStack}) =>
+      .with('progressBar', ({size, chunkStack, headers}) =>
         xprogress.stream(
           size,
           chunkStack.map(chunk => chunk.size),
           {
-            label: `Length: :{total} (:{size:total})\nSaving to: ${outputFile}`,
+            label: `Length: :{total} (:{size:total})${
+              headers['content-type'] ? ` [${headers['content-type']}]` : ''
+            }\nSaving to: ${outputFile}`,
             forceFirst: options.singleBar || chunkStack.length > 20,
             length: 40,
             pulsate: options.pulsateBar || !Number.isFinite(size),
@@ -116,9 +118,9 @@ function processArgs(_url, outputFile, options) {
       });
   else
     request
-      .on('loaded', ({size, chunkable, chunkStack}) => {
+      .on('loaded', ({size, chunkable, chunkStack, headers}) => {
         log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
-        log(`Length: ${size} (${xbytes(size)})`);
+        log(`Length: ${size} (${xbytes(size)}) ${headers['content-type'] ? `[${headers['content-type']}]` : ''}`);
         log(`Saving to: ${outputFile}...`);
       })
       .on('end', () => {
