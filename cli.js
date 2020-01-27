@@ -59,7 +59,6 @@ function processArgs(_url, outputFile, options) {
 
   log(`URL:`, _url);
   log(`resume:`, options.continue);
-  log(`max-retries:`, options.tries);
   log(`offset:`, options.startPos);
   log(`Verbose:`, options.verbose);
   const opts = {
