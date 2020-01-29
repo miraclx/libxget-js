@@ -139,7 +139,7 @@ const command = commander
   .option('-n, --chunks <N>', 'set number of concurrent chunk streams to N', 5)
   .option('-c, --continue', 'resume getting a partially downloaded file')
   .option('-t, --tries <N>', 'set number of retries for each chunk to N', 5)
-  .option('-h, --hash [algorithm]', 'calculate hash sum for the requested content using the specified algorithm', 'md5')
+  .option('-s, --hash [algorithm]', 'calculate hash sum for the requested content using the specified algorithm', 'md5')
   .option('-P, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
   .option('-I, --infinite-retries', 'retry each chunk infinitely')
   .option('--start-pos <OFFSET>', 'start downloading from zero-based position OFFSET', 0)
