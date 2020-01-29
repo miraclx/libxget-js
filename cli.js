@@ -67,8 +67,6 @@ function processArgs(_url, outputFile, options) {
     timeout: 15000,
     start: options.startPos,
     retries: options.tries,
-    with: {},
-    use: {},
   };
 
   const request = xget(_url, opts);
