@@ -59,12 +59,13 @@ function processArgs(_url, outputFile, options) {
 
   log(`URL:`, _url);
   log(`resume:`, options.continue);
-  log(`offset:`, options.startPos);
+  // log(`Verbose:`, options.verbose);
   log(`Verbose:`, options.verbose);
   const opts = {
     chunks: options.chunks,
     hash: options.hash,
     timeout: 15000,
+    start: options.startPos,
     retries: options.tries,
     with: {},
     use: {},
