@@ -104,7 +104,7 @@ function processArgs(_url, outputFile, options) {
             bar: {separator: '|', header: ''},
             template: [
               '[:{label}]',
-              ...(Number.isFinite(size) && !options.singleBar
+              ...(Number.isFinite(size) && !options.singleBar && chunkStack.length > 1
                 ? [' •|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', ' •[:{bar}] [:{size}]']
                 : [' •|:{bar}| [:3{percentage}%] [:{speed}] (:{eta}) [:{size}]']),
             ],
