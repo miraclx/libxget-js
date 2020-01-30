@@ -110,7 +110,7 @@ function processArgs(_url, outputFile, options) {
             ],
             variables: {
               size: (stack, _size, total) => (
-                (total = stack['size:total:raw']), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
+                (total = stack.total), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
               ),
             },
           },
