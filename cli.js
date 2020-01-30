@@ -118,19 +118,13 @@ function processArgs(_url, outputFile, options) {
       )
       .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
       .on('loaded', ({chunkable, chunkStack}) => log(`Chunks: ${chunkable ? chunkStack.length : 1}`))
-      .on('retry', ({index, retryCount, bytesRead, totalBytes, store, lastErr}) =>
-        store.get('progressBar').print(`[@${index}] [Retries = ${retryCount}] [${bytesRead} / ${totalBytes}] ${lastErr.code}`),
-      )
+      .on('retry', data => data.store.get('progressBar').print(getRetryMessage(data)))
       .on('end', () => {
-        request.store
-          .get('progressBar')
-          .end(
-            [
-              `• Download Complete at ${request.bytesRead}`,
-              `• Hash(${request.getHashAlgorithm()}): ${request.getHash('hex')}`,
-              '',
-            ].join('\n'),
-          );
+        request.store.get('progressBar').end(
+          getEndMessage(request)
+            .concat('')
+            .join('\n'),
+        );
       });
   else
     request
@@ -139,10 +133,8 @@ function processArgs(_url, outputFile, options) {
         log(`Length: ${size} (${xbytes(size)}) ${headers['content-type'] ? `[${headers['content-type']}]` : ''}`);
         log(`Saving to: ${outputFile}...`);
       })
-      .on('end', () => {
-        log(`• Download Complete at ${request.bytesRead}`);
-        log(`• Hash(${request.getHashAlgorithm()}): ${request.getHash('hex')}`);
-      });
+      .on('retry', data => log(getRetryMessage(data)))
+      .on('end', () => log(getEndMessage(request).join('\n')));
 
   request.on('error', err => log('cli>', err));
   request.pipe(fs.createWriteStream(outputFile));
