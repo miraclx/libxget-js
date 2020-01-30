@@ -31,7 +31,9 @@ function getRetryMessage({index, retryCount, maxRetries, bytesRead, totalBytes, 
     [
       ':{color(red)}{⯈}:{color:close(red)} ',
       `:{color(cyan)}@${index + 1}:{color:close(cyan)}`,
-      `{:{color(yellow)}${retryCount}:{color:close(yellow)}/:{color(yellow)}${maxRetries}:{color:close(yellow)}}: `,
+      `{:{color(yellow)}${retryCount}:{color:close(yellow)}${
+        Number.isFinite(maxRetries) ? `/:{color(yellow)}${maxRetries}:{color:close(yellow)}` : ''
+      }}: `,
       `[:{color(yellow)}${lastErr.code}:{color:close(yellow)}] `,
       `(:{color(cyan)}${bytesRead}:{color:close(cyan)}/:{color(cyan)}${totalBytes}:{color:close(cyan)})`,
     ].join(''),
