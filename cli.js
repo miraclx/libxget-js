@@ -129,7 +129,7 @@ function processArgs(_url, outputFile, options) {
 
   request
     .on('loaded', ({size, start, chunkable, chunkStack, headers}) => {
-      if (!chunkable && start > 0)
+      if ((!chunkable && options.startPos > 0) || options.continue)
         log(
           cStringd(
             `:{color(yellow)}{i}:{color:close(yellow)} Server doesn't support byteRanges. ${
