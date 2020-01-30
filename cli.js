@@ -142,7 +142,11 @@ function processArgs(_url, outputFile, options) {
           ),
         );
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
-      log(`Length: ${size} (${xbytes(size)}) ${headers['content-type'] ? `[${headers['content-type']}]` : ''}`);
+      log(
+        `Length: ${Number.isFinite(size) ? `${size} (${xbytes(size)})` : 'unspecified'} ${
+          headers['content-type'] ? `[${headers['content-type']}]` : ''
+        }`,
+      );
       log(`Saving to: ‘${outputFile}’...`);
     })
     .on('error', err => log('cli>', err));
