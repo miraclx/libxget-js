@@ -128,7 +128,7 @@ function processArgs(_url, outputFile, options) {
   else request.on('retry', data => log(getRetryMessage(data))).on('end', () => log(getEndMessage(request).join('\n')));
 
   request
-    .on('loaded', ({size, start, chunkable, chunkStack, headers}) => {
+    .on('loaded', ({size, chunkable, chunkStack, headers}) => {
       if ((!chunkable && options.startPos > 0) || options.continue)
         log(
           cStringd(
