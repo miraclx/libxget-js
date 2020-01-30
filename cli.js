@@ -90,23 +90,21 @@ function processArgs(_url, outputFile, options) {
 
   if (options.bar)
     request
-      .with('progressBar', ({size, chunkStack, headers}) =>
+      .with('progressBar', ({size, chunkStack}) =>
         xprogress.stream(
           size,
           chunkStack.map(chunk => chunk.size),
           {
-            label: `Length: :{total} (:{size:total})${
-              headers['content-type'] ? ` [${headers['content-type']}]` : ''
-            }\nSaving to: ${outputFile}`,
+            label: outputFile,
             forceFirst: options.singleBar || chunkStack.length > 20,
             length: 40,
             pulsate: options.pulsateBar || !Number.isFinite(size),
             bar: {separator: '|', header: ''},
             template: [
-              ':{label}',
+              '[:{label}]',
               ...(!options.singleBar
-                ? ['•|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', '•[:{bar}] [:{size}]']
-                : ['•|:{bar}| [:3{percentage}%] [:{speed}] (:{eta}) [:{size}]', '']),
+                ? [' •|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', ' •[:{bar}] [:{size}]']
+                : [' •|:{bar}| [:3{percentage}%] [:{speed}] (:{eta}) [:{size}]', '']),
             ],
             variables: {
               size: (stack, _size, total) => (
@@ -117,7 +115,6 @@ function processArgs(_url, outputFile, options) {
         ),
       )
       .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
-      .on('loaded', ({chunkable, chunkStack}) => log(`Chunks: ${chunkable ? chunkStack.length : 1}`))
       .on('retry', data => data.store.get('progressBar').print(getRetryMessage(data)))
       .on('end', () => {
         request.store.get('progressBar').end(
@@ -126,17 +123,15 @@ function processArgs(_url, outputFile, options) {
             .join('\n'),
         );
       });
-  else
-    request
-      .on('loaded', ({size, chunkable, chunkStack, headers}) => {
-        log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
-        log(`Length: ${size} (${xbytes(size)}) ${headers['content-type'] ? `[${headers['content-type']}]` : ''}`);
-        log(`Saving to: ${outputFile}...`);
-      })
-      .on('retry', data => log(getRetryMessage(data)))
-      .on('end', () => log(getEndMessage(request).join('\n')));
+  else request.on('retry', data => log(getRetryMessage(data))).on('end', () => log(getEndMessage(request).join('\n')));
 
-  request.on('error', err => log('cli>', err));
+  request
+    .on('loaded', ({size, chunkable, chunkStack, headers}) => {
+      log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
+      log(`Length: ${size} (${xbytes(size)}) ${headers['content-type'] ? `[${headers['content-type']}]` : ''}`);
+      log(`Saving to: ‘${outputFile}’...`);
+    })
+    .on('error', err => log('cli>', err));
   request.pipe(fs.createWriteStream(outputFile));
 }
 
