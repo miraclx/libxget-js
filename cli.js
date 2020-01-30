@@ -128,7 +128,19 @@ function processArgs(_url, outputFile, options) {
   else request.on('retry', data => log(getRetryMessage(data))).on('end', () => log(getEndMessage(request).join('\n')));
 
   request
-    .on('loaded', ({size, chunkable, chunkStack, headers}) => {
+    .on('loaded', ({size, start, chunkable, chunkStack, headers}) => {
+      if (!chunkable && start > 0)
+        log(
+          cStringd(
+            `:{color(yellow)}{i}:{color:close(yellow)} Server doesn't support byteRanges. ${
+              options.startPos !== 0
+                ? ':{color(cyan)}`--start-pos`:{color:close(cyan)} ignored.'
+                : options.continue
+                ? `Cannot resume.`
+                : ''
+            }`,
+          ),
+        );
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
       log(`Length: ${size} (${xbytes(size)}) ${headers['content-type'] ? `[${headers['content-type']}]` : ''}`);
       log(`Saving to: ‘${outputFile}’...`);
