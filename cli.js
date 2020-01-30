@@ -6,6 +6,7 @@ const path = require('path');
 const util = require('util');
 
 const xbytes = require('xbytes');
+const cStringd = require('stringd-colors');
 const commander = require('commander');
 const xprogress = require('xprogress');
 
@@ -24,6 +25,22 @@ const [log, error] = [, ,].fill(
     };
   })(),
 );
+
+function getRetryMessage({index, retryCount, maxRetries, bytesRead, totalBytes, lastErr}) {
+  return cStringd(
+    [
+      ':{color(red)}{⯈}:{color:close(red)} ',
+      `:{color(cyan)}@${index + 1}:{color:close(cyan)}`,
+      `{:{color(yellow)}${retryCount}:{color:close(yellow)}/:{color(yellow)}${maxRetries}:{color:close(yellow)}}: `,
+      `[:{color(yellow)}${lastErr.code}:{color:close(yellow)}] `,
+      `(:{color(cyan)}${bytesRead}:{color:close(cyan)}/:{color(cyan)}${totalBytes}:{color:close(cyan)})`,
+    ].join(''),
+  );
+}
+
+function getEndMessage(request) {
+  return [`• Download Complete at ${request.bytesRead}`, `• Hash(${request.getHashAlgorithm()}): ${request.getHash('hex')}`];
+}
 
 function processArgs(_url, outputFile, options) {
   const parsedUrl = url.parse(_url);
