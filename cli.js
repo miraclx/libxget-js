@@ -37,10 +37,9 @@ function getRetryMessage({index, retryCount, maxRetries, bytesRead, totalBytes, 
         Number.isFinite(maxRetries) ? `/:{color(yellow)}${maxRetries}:{color:close(yellow)}` : ''
       }}: `,
       `[:{color(yellow)}${lastErr.code}:{color:close(yellow)}] `,
-      `(:{color(cyan)}${`${bytesRead}`.padStart(
-        `${totalBytes}`.length,
-        ' ',
-      )}:{color:close(cyan)}/:{color(cyan)}${totalBytes}:{color:close(cyan)})`,
+      `(:{color(cyan)}${
+        Number.isFinite(totalBytes) ? `${bytesRead}`.padStart(`${totalBytes}`.length, ' ') : bytesRead
+      }:{color:close(cyan)}${Number.isFinite(totalBytes) ? `/:{color(cyan)}${totalBytes}:{color:close(cyan)` : ''})`,
     ].join(''),
   );
 }
