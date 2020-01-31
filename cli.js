@@ -103,7 +103,7 @@ function processArgs(_url, outputFile, options) {
               '[:{label}]',
               ...(Number.isFinite(size) && !options.singleBar && chunkStack.length > 1
                 ? [' •|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', ' •[:{bar}] [:{size}]']
-                : [' •|:{bar}| [:3{percentage}%] [:{speed}] (:{eta}) [:{size}]']),
+                : [` •|:{bar}|${Number.isFinite(size) ? ' [:3{percentage}%]' : ''} [:{speed}] (:{eta}) [:{size}]`]),
             ],
             variables: {
               size: (stack, _size, total) => (
