@@ -148,9 +148,9 @@ function processArgs(_url, outputFile, options) {
         }`,
       );
       log(`Saving to: ‘${outputFile}’...`);
+      request.pipe(fs.createWriteStream(outputFile));
     })
     .on('error', err => log('cli>', err));
-  request.pipe(fs.createWriteStream(outputFile));
 }
 
 const command = commander
