@@ -146,9 +146,9 @@ function processArgs(_url, outputFile, options) {
 
       const type = headers['content-type'] || '';
       const ext = mime.extension(type);
-      const filename = headers['content-disposition']
-        ? contentDisposition.parse(headers['content-disposition']).parameters.filename
-        : '';
+      const {filename} = headers['content-disposition']
+        ? contentDisposition.parse(headers['content-disposition']).parameters
+        : {};
 
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
       log(`Length: ${Number.isFinite(size) ? `${size} (${xbytes(size)})` : 'unspecified'} ${type ? `[${type}]` : ''}`);
