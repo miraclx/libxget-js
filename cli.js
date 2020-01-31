@@ -7,9 +7,9 @@ const util = require('util');
 
 const xbytes = require('xbytes');
 const cStringd = require('stringd-colors');
+const mime = require('mime-types');
 const commander = require('commander');
 const xprogress = require('xprogress');
-const contentType = require('content-type');
 
 const xget = require('.');
 const {XgetException} = require('./lib/xgetception');
@@ -143,7 +143,8 @@ function processArgs(_url, outputFile, options) {
           ),
         );
 
-      const type = headers['content-type'] ? contentType.parse(headers['content-type']).type : '';
+      const type = headers['content-type'] || '';
+      const ext = mime.extension(type);
 
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
       log(`Length: ${Number.isFinite(size) ? `${size} (${xbytes(size)})` : 'unspecified'} ${type ? `[${type}]` : ''}`);
