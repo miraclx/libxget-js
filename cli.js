@@ -50,11 +50,6 @@ function processArgs(_url, outputFile, options) {
   const parsedUrl = url.parse(_url);
   if (!['protocol', 'hostname'].every(item => parsedUrl[item]))
     error('\x1b[31m[i]\x1b[0m Please enter a valid URL'), process.exit(1);
-  outputFile = (_path =>
-    path.join(
-      options.directoryPrefix || path.isAbsolute(_path) ? '/' : '.',
-      !options.directories ? path.basename(_path) : _path,
-    ))(outputFile || (parsedUrl.pathname && parsedUrl.pathname === '/' ? 'index.html' : parsedUrl.pathname));
 
   function CHECK_FLAG_VAL(variable, flagref, untype) {
     // eslint-disable-next-line valid-typeof
@@ -149,6 +144,16 @@ function processArgs(_url, outputFile, options) {
       const {filename} = headers['content-disposition']
         ? contentDisposition.parse(headers['content-disposition']).parameters
         : {};
+
+      outputFile = (_path =>
+        path.join(
+          options.directoryPrefix || path.isAbsolute(_path) ? '/' : '.',
+          !options.directories ? path.basename(_path) : _path,
+        ))(
+        outputFile ||
+          filename ||
+          (parsedUrl.pathname && parsedUrl.pathname === '/' ? `index.${ext || 'html'}` : parsedUrl.pathname.slice(1)),
+      );
 
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
       log(`Length: ${Number.isFinite(size) ? `${size} (${xbytes(size)})` : 'unspecified'} ${type ? `[${type}]` : ''}`);
