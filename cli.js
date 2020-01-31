@@ -9,6 +9,7 @@ const xbytes = require('xbytes');
 const cStringd = require('stringd-colors');
 const commander = require('commander');
 const xprogress = require('xprogress');
+const contentType = require('content-type');
 
 const xget = require('.');
 const {XgetException} = require('./lib/xgetception');
@@ -141,12 +142,11 @@ function processArgs(_url, outputFile, options) {
             }`,
           ),
         );
+
+      const type = headers['content-type'] ? contentType.parse(headers['content-type']).type : '';
+
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
-      log(
-        `Length: ${Number.isFinite(size) ? `${size} (${xbytes(size)})` : 'unspecified'} ${
-          headers['content-type'] ? `[${headers['content-type']}]` : ''
-        }`,
-      );
+      log(`Length: ${Number.isFinite(size) ? `${size} (${xbytes(size)})` : 'unspecified'} ${type ? `[${type}]` : ''}`);
       log(`Saving to: ‘${outputFile}’...`);
       request.pipe(fs.createWriteStream(outputFile));
     })
