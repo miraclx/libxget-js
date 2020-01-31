@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const tty = require('tty');
 const url = require('url');
+const tty = require('tty');
 const path = require('path');
 const util = require('util');
 
 const xbytes = require('xbytes');
-const cStringd = require('stringd-colors');
 const mime = require('mime-types');
 const commander = require('commander');
 const xprogress = require('xprogress');
+const cStringd = require('stringd-colors');
 const contentDisposition = require('content-disposition');
 
 const xget = require('.');
-const {XgetException} = require('./lib/xgetception');
 const packageJson = require('./package.json');
+const {XgetException} = require('./lib/xgetception');
 
 const [log, error] = [, ,].fill(
   (function ninjaLoggers() {
