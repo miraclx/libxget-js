@@ -147,7 +147,7 @@ function processArgs(_url, outputFile, options) {
 
       outputFile = (_path =>
         path.join(
-          options.directoryPrefix || path.isAbsolute(_path) ? '/' : '.',
+          options.directoryPrefix || (path.isAbsolute(_path) ? '/' : '.'),
           !options.directories ? path.basename(_path) : _path,
         ))(
         outputFile ||
