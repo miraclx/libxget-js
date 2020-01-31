@@ -10,6 +10,7 @@ const cStringd = require('stringd-colors');
 const mime = require('mime-types');
 const commander = require('commander');
 const xprogress = require('xprogress');
+const contentDisposition = require('content-disposition');
 
 const xget = require('.');
 const {XgetException} = require('./lib/xgetception');
@@ -145,6 +146,9 @@ function processArgs(_url, outputFile, options) {
 
       const type = headers['content-type'] || '';
       const ext = mime.extension(type);
+      const filename = headers['content-disposition']
+        ? contentDisposition.parse(headers['content-disposition']).parameters.filename
+        : '';
 
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
       log(`Length: ${Number.isFinite(size) ? `${size} (${xbytes(size)})` : 'unspecified'} ${type ? `[${type}]` : ''}`);
