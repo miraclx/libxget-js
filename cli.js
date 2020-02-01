@@ -101,13 +101,13 @@ function processArgs(_url, outputFile, options) {
             length: 40,
             pulsate: options.pulsateBar || !Number.isFinite(size),
             bar: {separator: '|', header: ''},
-            template: [
-              '[:{label}]',
-              ...(Number.isFinite(size) && !options.singleBar && chunkStack.length > 1
-                ? [' •|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', ' •[:{bar}] [:{size}]']
-                : [` •|:{bar}|${Number.isFinite(size) ? ' [:3{percentage}%]' : ''} [:{speed}] (:{eta}) [:{size}]`]),
-            ],
+            template: ['[:{label}]', ':{bars}'],
             variables: {
+              bars: ({total}) =>
+                (Number.isFinite(total) && !options.singleBar && chunkStack.length > 1
+                  ? [' •|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', ' •[:{bar}] [:{size}]']
+                  : [` •|:{bar}|${Number.isFinite(total) ? ' [:3{percentage}%]' : ''} [:{speed}] (:{eta}) [:{size}]`]
+                ).join('\n'),
               size: (stack, _size, total) => (
                 (total = stack.total), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
               ),
