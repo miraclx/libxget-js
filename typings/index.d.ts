@@ -57,7 +57,7 @@ declare namespace xget {
     stream: xresilient.ResilientStream<request.Request>;
   }
 
-  interface RetrySlice extends xresilient.RetrySlice {
+  interface RetrySlice extends xresilient.RetrySlice<request.Request> {
     store: MiddlewareStore;
     index: number;
     totalBytes: number;
