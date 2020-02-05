@@ -51,6 +51,11 @@ function getEndMessage(request) {
   ];
 }
 
+function parseExt(npath, ext) {
+  const rext = path.extname(npath);
+  return rext ? npath : path.join(path.dirname(npath), path.basename(npath, rext) + ext);
+}
+
 function processArgs(_url, outputFile, options) {
   const parsedUrl = url.parse(_url);
   if (!['protocol', 'hostname'].every(item => parsedUrl[item]))
@@ -157,7 +162,10 @@ function processArgs(_url, outputFile, options) {
         ))(
         outputFile ||
           filename ||
-          (parsedUrl.pathname && parsedUrl.pathname === '/' ? `index.${ext || 'html'}` : parsedUrl.pathname.slice(1)),
+          parseExt(
+            parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : parsedUrl.pathname.slice(1),
+            `.${ext}` || '.html',
+          ),
       );
 
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
