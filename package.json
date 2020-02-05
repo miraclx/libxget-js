@@ -49,6 +49,7 @@
   "dependencies": {
     "commander": "^4.1.0",
     "content-disposition": "^0.5.3",
+    "content-type": "^1.0.4",
     "http-range": "^1.0.0",
     "merge2": "^1.3.0",
     "mime-types": "^2.1.26",
