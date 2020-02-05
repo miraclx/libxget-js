@@ -21,6 +21,7 @@ declare namespace xget {
     constructor(url: string, options?: XGETOptions);
     on(event: string, listener: (...args: any[]) => void): this;
     on(event: 'end', listener: () => void): this;
+    on(event: 'set', listener: (store: MiddlewareStore) => void): this;
     on(event: 'error', listener: (err: Error | XgetException | XgetNetException) => void): this;
     on(event: 'retry', listener: (slice: RetrySlice) => void): this;
     on(event: 'loaded', listener: (dataSlice: LoadDataSlice) => void): this;
