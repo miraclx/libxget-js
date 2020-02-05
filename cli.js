@@ -177,7 +177,7 @@ const command = commander
   .option('-c, --continue', 'resume getting a partially downloaded file')
   .option('-t, --tries <N>', 'set number of retries for each chunk to N', 5)
   .option('-s, --hash [algorithm]', 'calculate hash sum for the requested content using the specified algorithm')
-  .option('-P, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
+  .option('-D, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
   .option('-I, --infinite-retries', 'retry each chunk infinitely')
   .option('--start-pos <OFFSET>', 'start downloading from zero-based position OFFSET', 0)
   .option('--no-directories', "don't create directories")
