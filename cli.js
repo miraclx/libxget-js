@@ -163,7 +163,7 @@ function processArgs(_url, outputFile, options) {
         outputFile ||
           filename ||
           parseExt(
-            parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : parsedUrl.pathname.slice(1),
+            parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
             `.${ext}` || '.html',
           ),
       );
