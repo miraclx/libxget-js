@@ -195,7 +195,7 @@ const command = commander
   .action(processArgs);
 
 function main(argv) {
-  if (!argv.includes('-v')) {
+  if (!argv.includes('-V')) {
     const credits = `libxget v${packageJson.version} - (c) ${packageJson.author}`;
     log(credits);
     log('-'.repeat(credits.length));
