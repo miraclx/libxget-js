@@ -19,8 +19,8 @@ This installs a CLI binary accessible with the `xget` command.
 
 ``` bash
 # Check if the xget command has been installed and accessible on your path
-$ xget -v
-v0.5.0
+$ xget -V
+v0.5.1
 ```
 
 ## Usage
