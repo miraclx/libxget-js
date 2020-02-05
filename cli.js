@@ -10,6 +10,7 @@ const mime = require('mime-types');
 const commander = require('commander');
 const xprogress = require('xprogress');
 const cStringd = require('stringd-colors');
+const contentType = require('content-type');
 const contentDisposition = require('content-disposition');
 
 const xget = require('.');
@@ -149,7 +150,7 @@ function processArgs(_url, outputFile, options) {
           ),
         );
 
-      const type = headers['content-type'] || '';
+      const {type} = contentType.parse(headers['content-type'] || 'application/octet-stream');
       const ext = mime.extension(type);
       const {filename} = headers['content-disposition']
         ? contentDisposition.parse(headers['content-disposition']).parameters
