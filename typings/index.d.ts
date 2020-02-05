@@ -24,7 +24,7 @@ declare namespace xget {
     on(event: 'error', listener: (err: Error | XgetException | XgetNetException) => void): this;
     on(event: 'retry', listener: (slice: RetrySlice) => void): this;
     on(event: 'loaded', listener: (dataSlice: LoadDataSlice) => void): this;
-    readonly store: MapMiddlewareStore;
+    readonly store: MiddlewareStore;
     readonly ended: false;
     readonly loaded: false;
     readonly bytesRead: number;
