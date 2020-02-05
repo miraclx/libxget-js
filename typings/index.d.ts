@@ -18,7 +18,7 @@ declare namespace xget {
   }
 
   interface XGETStream extends stream.Readable {
-    private constructor(url: string, options?: XGETOptions);
+    constructor(url: string, options?: XGETOptions);
     on(event: string, listener: (...args: any[]) => void): this;
     on(event: 'end', listener: () => void): this;
     on(event: 'error', listener: (err: Error | XgetException | XgetNetException) => void): this;
