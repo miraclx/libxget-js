@@ -20,7 +20,20 @@
   "directories": {
     "lib": "lib"
   },
-  "keywords": [],
+  "keywords": [
+    "web",
+    "http",
+    "util",
+    "wget",
+    "chunk",
+    "chunks",
+    "stream",
+    "request",
+    "utility",
+    "segment",
+    "segments",
+    "async-stream"
+  ],
   "author": "Miraculous Owonubi <omiraculous@gmail.com>",
   "maintainers": [
     "Miraculous Owonubi <omiraculous@gmail.com>"
