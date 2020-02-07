@@ -158,7 +158,7 @@ The core expects the `handler` to return a [stream.Duplex] instance. (A readable
 // Example, compressing the response content in real time
 xget(URL)
   .use('compressor', () => zlib.createGzip())
-  .pipe(fs.createWriteStream(FILE))
+  .pipe(createWriteStreamSomehow())
 ```
 
 ### <a id='xgetwith'></a> xget.with(tag, handler)
@@ -174,7 +174,7 @@ xget(URL)
   .with('bar', ({size}) => progressBar(size)) // Create a finite-sized progress bar
   .use('bar', (_, store) => store.get('bar').genStream()) // Create a stream handling object that updates the progressbar from the number of bytes flowing through itself
   .once('set', store => store.get('bar').print('Downloading...'))
-  .pipe(FILE);
+  .pipe(createWriteStreamSomehow());
 ```
 
 ### <a id='chunkloadinstance'></a> ChunkLoadInstance: [`Object`][object]
