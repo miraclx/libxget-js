@@ -86,4 +86,4 @@ declare namespace xget {
 }
 
 declare let xget: xget.XGETInstance;
-export = request;
+export = xget;
