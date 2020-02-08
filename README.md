@@ -140,6 +140,8 @@ This event is fired after the `'loaded'` event.
 
 ### Event: 'error'
 
+* `err`: &lt;[Error][]&gt; The error instance.
+
 The `'error'` event is emitted once a chunk has met it's maximum number of retries.
 At which point, it would abruptly destroy other chunk connections.
 
