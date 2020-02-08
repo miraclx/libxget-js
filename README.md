@@ -132,6 +132,8 @@ The `'end'` event is emitted after the data from the URL has been fully flushed.
 
 ### Event: 'set'
 
+* `store`: &lt;[xget.store](#xgetstore)&gt; The shared internal data store.
+
 The `'set'` event is emitted after all the middlewares defined in the `with` option of the [XGETOptions](#xgetoptions) or with the [xget.with()](#xgetwith) method.
 
 This event is fired after the `'loaded'` event.
