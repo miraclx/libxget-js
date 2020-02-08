@@ -126,6 +126,45 @@ The core multi-chunk request instance.
 * `options`: &lt;[XGETOptions](#xgetoptions)&gt;
 * Returns: &lt;[XGETStream](#xgetstream)&gt;
 
+### Event: 'end'
+
+The `'end'` event is emitted after the data from the URL has been fully flushed.
+
+### Event: 'set'
+
+The `'set'` event is emitted after all the middlewares defined in the `with` option of the [XGETOptions](#xgetoptions) or with the [xget.with()](#xgetwith) method.
+
+This event is fired after the `'loaded'` event.
+
+### Event: 'error'
+
+The `'error'` event is emitted once a chunk has met it's maximum number of retries.
+At which point, it would abruptly destroy other chunk connections.
+
+### Event: 'retry'
+
+* `retrySlice`:
+  * `index`: &lt;[number][]&gt; The index count of the chunk.
+  * `retryCount`: &lt;[number][]&gt; The number of retry iterations so far.
+  * `maxRetries`: &lt;[number][]&gt; The maximum number of retries possible.
+  * `bytesRead`: &lt;[number][]&gt; The number of bytes previously read (if any).
+  * `totalBytes`: &lt;[number][]&gt; The total number of bytes that are to be read by the stream.
+  * `lastErr`: &lt;[Error][]&gt; The error emitted by the previous stream.
+  * `store`: &lt;[xget.store](#xgetstore)&gt; The shared internal data store.
+
+The `'retry'` event is emitted by every chunk once it has been re-initialized underneath.
+Based on the spec of the [xresilient][] module, chunks are reinitialized once an error event is met.
+
+### Event: 'loaded'
+
+* `loadData`: &lt;[LoadData](#loaddata)&gt; The pre-computed config for the loaded data slice.
+
+This is emitted immediately the head data is gotten, preprocessed, parsed and used to tailor the configuration for the chunk setup.
+
+This `loadData` contains information like the actual size of the remote file and whether or not the server supports multiple connections, chunking, file resumption, etc.
+
+This event is fired prior to the `'set'` event.
+
 ### xget.getHash([encoding])
 
 * `encoding`: &lt;[string][]&gt; The character encoding to use. **Default**: `'hex'`
@@ -177,6 +216,14 @@ xget(URL)
   .pipe(createWriteStreamSomehow());
 ```
 
+### <a id='loaddata'></a> LoadData: [`Object`][object]
+
+* `url`: &lt;[string][]&gt; The URL specified.
+* `size`: &lt;[number][]&gt; Finite number returned if server responds appropriately, else `Infinity`.
+* `start`: &lt;[number][]&gt; Sticks to specification if server allows chunking via `content-ranges` else, resets to `0`.
+* `chunkable`: &lt;[number][]&gt; Whether or not the URL feed can be chunked, supporting simultaneous connections.
+* `chunkStack`: &lt;[ChunkLoadInstance](#chunkloadinstance)[]&gt; The chunkstack array.
+
 ### <a id='chunkloadinstance'></a> ChunkLoadInstance: [`Object`][object]
 
 * `min`: &lt;[number][]&gt; The minimum extent for the chunk segment range.
@@ -186,12 +233,7 @@ xget(URL)
 
 ### <a id='withmiddlewarefn'></a> WithMiddlewareFn: [`Function`][function]
 
-* `loadData`: &lt;[object][]&gt;
-  * `url`: &lt;[string][]&gt; The URL specified.
-  * `size`: &lt;[number][]&gt; Finite number returned if server responds appropriately, else `Infinity`.
-  * `start`: &lt;[number][]&gt; Sticks to specification if server allows chunking via `content-ranges` else, resets to `0`.
-  * `chunkable`: &lt;[number][]&gt; Whether or not the URL feed can be chunked, supporting simultaneous connections.
-  * `chunkStack`: &lt;[ChunkLoadInstance](#chunkloadinstance)[]&gt; The chunkstack array.
+* `loadData`: &lt;[LoadData](#loaddata)&gt;
 
 This `handler` is called immediately after metadata from URL is loaded that describes the response.
 That is, pre-streaming data from the HEAD like size (content-length), content-type, filename (content-disposition), whether or not it's chunkable (accept-ranges) and a couple of other criterias.
@@ -241,6 +283,7 @@ npm run build
 [downloads-url]: https://npmjs.org/package/libxget
 [downloads-image]: https://badgen.net/npm/dm/libxget
 
+[xresilient]: https://github.com/miraclx/xresilient
 [RequestOpts]: https://github.com/request/request#requestoptions-callback
 [ResilientStream]: https://github.com/miraclx/xresilient#resilientstream
 
