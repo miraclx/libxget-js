@@ -220,6 +220,31 @@ xget(URL)
   .pipe(createWriteStreamSomehow());
 ```
 
+### <a id='xgetgeterrcontext'></a> xget.getErrContext(err)
+
+* `err`: &lt;[Error][]&gt;
+* Returns: &lt;[Object][]&gt;
+  * `raw`: &lt;[Error][]&gt;
+  * `tag`: &lt;[string][]&gt; The tag of the middleware function as defined.
+  * `source`: &lt;`'xget:with'`&gt; | &lt;`'xget:use'`&gt; The type of middleware from which the error was emitted.
+
+Extract data from an error if it was either thrown from within a [UseMiddlewareFn](#usemiddlewarefn) or a [WithMiddlewareFn](#withmiddlewarefn) function.
+
+``` javascript
+xget(URL)
+  .use('errorThrower', () => {
+    throw new Error('Custom error being thrown');
+  })
+  .once('error', err => {
+    const ({tag, source}) = xget.getErrContext(err);
+    if (source)
+      console.log(`Error thrown from within the [${tag}] method of the [${source}] middlware`);
+    // Error thrown from within the [errorThrower] method of the [xget:use] middleware
+  })
+  .pipe(createWriteStreamSomehow());
+
+```
+
 ### <a id='loaddata'></a> LoadData: [`Object`][object]
 
 * `url`: &lt;[string][]&gt; The URL specified.
