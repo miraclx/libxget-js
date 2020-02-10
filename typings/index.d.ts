@@ -34,6 +34,7 @@ declare namespace xget {
     getHashAlgorithm(): string;
     use(tag: string, fn: UseMiddlewareFn): this;
     with(tag: string, fn: WithMiddlewareFn): this;
+    getErrContext(err: Error): { raw: Error, tag: string, source: 'xget:with' | 'xget:use' }
   }
 
   interface XGETInstance {
