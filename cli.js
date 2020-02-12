@@ -105,7 +105,7 @@ function processArgs(_url, outputFile, options) {
           size,
           chunkStack.map(chunk => chunk.size),
           {
-            label: outputFile,
+            label: outputFile || '<stdout>',
             forceFirst: options.singleBar || chunkStack.length > 20,
             length: 40,
             pulsate: options.pulsateBar || !Number.isFinite(size),
@@ -156,24 +156,26 @@ function processArgs(_url, outputFile, options) {
         ? contentDisposition.parse(headers['content-disposition']).parameters
         : {};
 
-      outputFile = (_path =>
-        path.join(
-          options.directoryPrefix || (path.isAbsolute(_path) ? '/' : '.'),
-          !options.directories ? path.basename(_path) : _path,
-        ))(
-        outputFile ||
-          (filename
-            ? decodeURI(filename)
-            : parseExt(
-                parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
-                `.${ext}` || '.html',
-              )),
-      );
+      outputFile = process.stdout.isTTY
+        ? (_path =>
+            path.join(
+              options.directoryPrefix || (path.isAbsolute(_path) ? '/' : '.'),
+              !options.directories ? path.basename(_path) : _path,
+            ))(
+            outputFile ||
+              (filename
+                ? decodeURI(filename)
+                : parseExt(
+                    parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
+                    `.${ext}` || '.html',
+                  )),
+          )
+        : null;
 
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
       log(`Length: ${Number.isFinite(size) ? `${size} (${xbytes(size)})` : 'unspecified'} ${type ? `[${type}]` : ''}`);
-      log(`Saving to: ‘${outputFile}’...`);
-      request.pipe(fs.createWriteStream(outputFile));
+      log(`Saving to: ‘${outputFile || '<stdout>'}’...`);
+      request.pipe(outputFile ? fs.createWriteStream(outputFile) : process.stdout);
     })
     .on('error', err => log('cli>', err));
 }
