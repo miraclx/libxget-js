@@ -162,11 +162,12 @@ function processArgs(_url, outputFile, options) {
           !options.directories ? path.basename(_path) : _path,
         ))(
         outputFile ||
-          decodeURI(filename) ||
-          parseExt(
-            parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
-            `.${ext}` || '.html',
-          ),
+          (filename
+            ? decodeURI(filename)
+            : parseExt(
+                parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
+                `.${ext}` || '.html',
+              )),
       );
 
       log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
