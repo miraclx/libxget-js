@@ -81,7 +81,7 @@ function processArgs(_url, outputFile, options) {
     options.pulsateBar = options.pulsateBar || false;
   } catch (er) {
     error('\x1b[31m[i]\x1b[0m', er.message);
-    return;
+    process.exit(1);
   }
 
   log(`URL:`, _url);
