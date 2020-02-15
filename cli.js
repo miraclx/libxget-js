@@ -85,9 +85,6 @@ function processArgs(_url, outputFile, options) {
   }
 
   log(`URL:`, _url);
-  log(`resume:`, options.continue);
-  // log(`Verbose:`, options.verbose);
-  log(`Verbose:`, options.verbose);
   const opts = {
     chunks: options.chunks,
     hash: options.hash,
