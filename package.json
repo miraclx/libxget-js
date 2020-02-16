@@ -14,7 +14,7 @@
     "node": ">=8"
   },
   "files": [
-    "dist",
+    "lib",
     "typings"
   ],
   "directories": {
