@@ -110,7 +110,7 @@ function processArgs(_url, outputFile, options) {
             template: ['[:{label}]', ':{bars}'],
             variables: {
               bars: ({total}) =>
-                (Number.isFinite(total) && !options.singleBar && chunkStack.length > 1
+                (Number.isFinite(total) && !options.singleBar && chunkStack.length > 1 && chunkStack.length < 20
                   ? [' •|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', ' •[:{bar}] [:{size}]']
                   : [` •|:{bar}|${Number.isFinite(total) ? ' [:3{percentage}%]' : ''} [:{speed}] (:{eta}) [:{size}]`]
                 ).join('\n'),
