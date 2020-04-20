@@ -178,7 +178,9 @@ function processArgs(_url, outputFile, options) {
       log(`Saving to: ‘${outputFile || '<stdout>'}’...`);
       request.pipe(outputFile ? fs.createWriteStream(outputFile) : process.stdout);
     })
-    .on('error', err => log('cli>', err));
+    .on('error', err => {
+      log('[!] An error occurred', `[${err}]`);
+    });
 }
 
 const command = commander
