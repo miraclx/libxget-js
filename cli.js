@@ -124,6 +124,9 @@ function processArgs(_url, outputFile, options) {
       )
       .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
       .on('retry', data => data.store.get('progressBar').print(getRetryMessage(data)))
+      .on('error', () => {
+        if (request.store.has('progressBar')) request.store.get('progressBar').end('');
+      })
       .on('end', () => {
         request.store.get('progressBar').end(
           getEndMessage(request)
