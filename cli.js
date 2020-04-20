@@ -75,6 +75,7 @@ function processArgs(_url, outputFile, options) {
     options.tries = CHECK_FLAG_VAL(options.infiniteRetries ? Infinity : options.tries, '-t, --tries', 'number');
     options.chunks = CHECK_FLAG_VAL(options.chunks, '-n, --chunks', 'number');
     options.startPos = CHECK_FLAG_VAL(options.startPos, '--start-pos', 'number');
+    options.timeout = CHECK_FLAG_VAL(options.timeout, '--timeout', 'number');
     options.verbose = options.verbose || false;
     options.continue = options.continue || false;
     options.singleBar = options.singleBar || false;
@@ -88,7 +89,7 @@ function processArgs(_url, outputFile, options) {
   const opts = {
     chunks: options.chunks,
     hash: options.hash,
-    timeout: 15000,
+    timeout: options.timeout,
     start: options.startPos,
     retries: options.tries,
   };
@@ -189,6 +190,7 @@ const command = commander
   .option('-D, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
   .option('-i, --start-pos <OFFSET>', 'start downloading from zero-based position OFFSET', 0)
   .option('-I, --infinite-retries', 'retry each chunk infinitely')
+  .option('--timeout <N>', 'network inactivity timeout (ms)', 10000)
   .option('--no-directories', "don't create directories")
   .option('--no-bar', "don't show the ProgressBar")
   .option('--pulsate-bar', 'show a pulsating bar')
