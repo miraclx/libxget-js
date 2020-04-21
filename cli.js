@@ -212,7 +212,7 @@ const command = commander
 
 function main(argv) {
   if (!argv.includes('-V')) {
-    const credits = `libxget v${packageJson.version} - (c) ${packageJson.author}`;
+    const credits = `libxget v${packageJson.version} - (c) ${packageJson.author.name} <${packageJson.author.email}>`;
     log(credits);
     log('-'.repeat(credits.length));
     if (!argv.slice(2).filter(v => v !== '-').length) commander.outputHelp();

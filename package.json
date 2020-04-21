@@ -34,7 +34,10 @@
     "segments",
     "async-stream"
   ],
-  "author": "Miraculous Owonubi <omiraculous@gmail.com>",
+  "author": {
+    "name": "Miraculous Owonubi",
+    "email": "omiraculous@gmail.com"
+  },
   "maintainers": [
     "Miraculous Owonubi <omiraculous@gmail.com>"
   ],
