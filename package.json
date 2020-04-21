@@ -51,7 +51,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "axios": "^0.19.2",
-    "commander": "^4.1.0",
+    "commander": "^4.1.1",
     "content-disposition": "^0.5.3",
     "content-type": "^1.0.4",
     "http-range": "^1.0.0",
@@ -59,9 +59,9 @@
     "mime-types": "^2.1.26",
     "stream.pipeline-shim": "^1.1.0",
     "streaming-cache": "^0.5.5",
-    "stringd-colors": "^1.7.0",
-    "xbytes": "^1.5.2",
-    "xprogress": "^0.15.1",
+    "stringd-colors": "^1.8.0",
+    "xbytes": "^1.6.0",
+    "xprogress": "^0.17.0",
     "xresilient": "^0.8.0"
   }
 }
