@@ -148,6 +148,7 @@ At which point, it would abruptly destroy other chunk connections.
 ### Event: 'retry'
 
 * `retrySlice`:
+  * `meta`: &lt;[boolean][]&gt; Whether or not the error causing the retry was caused while getting the URL metadata. i.e before any streams are employed.
   * `index`: &lt;[number][]&gt; The index count of the chunk.
   * `retryCount`: &lt;[number][]&gt; The number of retry iterations so far.
   * `maxRetries`: &lt;[number][]&gt; The maximum number of retries possible.
