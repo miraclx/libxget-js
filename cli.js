@@ -29,18 +29,24 @@ const [log, error] = [, ,].fill(
   })(),
 );
 
-function getRetryMessage({index, retryCount, maxRetries, bytesRead, totalBytes, lastErr}) {
+function getRetryMessage({meta, index, retryCount, maxRetries, bytesRead, totalBytes, lastErr}) {
   return cStringd(
     [
       ':{color(red)}{⯈}:{color:close(red)} ',
-      `:{color(cyan)}@${index + 1}:{color:close(cyan)}`,
+      `:{color(cyan)}@${meta ? 'meta' : index + 1}:{color:close(cyan)}`,
       `{:{color(yellow)}${retryCount}:{color:close(yellow)}${
         Number.isFinite(maxRetries) ? `/:{color(yellow)}${maxRetries}:{color:close(yellow)}` : ''
       }}: `,
-      `[:{color(yellow)}${(lastErr && lastErr.code) || lastErr}:{color:close(yellow)}] `,
-      `(:{color(cyan)}${
-        Number.isFinite(totalBytes) ? `${bytesRead}`.padStart(`${totalBytes}`.length, ' ') : bytesRead
-      }:{color:close(cyan)}${Number.isFinite(totalBytes) ? `/:{color(cyan)}${totalBytes}:{color:close(cyan)}` : ''})`,
+      lastErr
+        ? `${
+            lastErr.code ? `[:{color(yellow)}${lastErr.code}:{color:close(yellow)}] ` : ''
+          }(:{color(yellow)}${lastErr}:{color:close(yellow)}) `
+        : '',
+      totalBytes
+        ? `(:{color(cyan)}${
+            Number.isFinite(totalBytes) ? `${bytesRead}`.padStart(`${totalBytes}`.length, ' ') : bytesRead
+          }:{color:close(cyan)}${Number.isFinite(totalBytes) ? `/:{color(cyan)}${totalBytes}:{color:close(cyan)}` : ''})`
+        : '',
     ].join(''),
   );
 }
@@ -123,7 +129,10 @@ function processArgs(_url, outputFile, options) {
         ),
       )
       .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
-      .on('retry', data => data.store.get('progressBar').print(getRetryMessage(data)))
+      .on('retry', data => {
+        if (data.meta === true) log(getRetryMessage(data));
+        else data.store.get('progressBar').print(getRetryMessage(data));
+      })
       .on('error', () => {
         if (request.store.has('progressBar')) request.store.get('progressBar').end();
       })
