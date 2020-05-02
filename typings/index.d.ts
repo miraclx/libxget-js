@@ -63,6 +63,7 @@ declare namespace xget {
     store: MiddlewareStore;
     index: number;
     totalBytes: number;
+    meta: boolean;
   }
 
   interface LoadDataSlice {
