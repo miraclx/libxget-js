@@ -34,6 +34,7 @@ declare namespace xget {
     getHash(): Buffer;
     getHash(encoding: string): string;
     getHashAlgorithm(): string;
+    setHeadHandler(fn: HeadHandler): boolean;
     use(tag: string, fn: UseMiddlewareFn): this;
     with(tag: string, fn: WithMiddlewareFn): this;
     getErrContext(err: Error): { raw: Error, tag: string, source: 'xget:with' | 'xget:use' }
@@ -53,6 +54,7 @@ declare namespace xget {
     chunks: number;
     retries: number;
     timeout: number;
+    headHandler: HeadHandler;
   }
 
   interface ChunkLoadInstance {
@@ -74,12 +76,14 @@ declare namespace xget {
     size: number;
     start: number;
     chunkable: boolean;
+    totalSize: number;
     chunkStack: ChunkLoadInstance[];
     headers: IncomingHttpHeaders;
   }
 
   type MiddlewareStore = Map<string, any>;
 
+  type HeadHandler = (props: {headers: IncomingHttpHeaders, acceptsRanges: boolean}) => number | void;
   type UseMiddlewareFn = (dataSlice: ChunkLoadInstance, store: MiddlewareStore) => NodeJS.ReadWriteStream;
   type WithMiddlewareFn = (loadData: LoadDataSlice) => any;
 

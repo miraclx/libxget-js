@@ -87,6 +87,7 @@ With 10 simultaneous downloads. Retrying each one to a max of 10.
 - `hash`: &lt;[string][]&gt; Hash algorithm to use to create a [crypto.Hash][] instance computing the stream hash.
 - `use`: &lt;[object][]&gt; Key-value pairs of middlewares with which to pipe the response object through. keys are [strings][string], values are [Transformer generating functions](#usemiddlewarefn) (Alternatively, use the [xget.use()](#xgetuse) method).
 - `with`: &lt;[object][]&gt; Key-value pairs of middlewares with which to pipe the dataslice object through. keys are [strings][string], values are [functions][function] whose return values are accessible within the [store](#storestack). (Alternatively, use the [xget.with()](#xgetwith) method).
+- `headHandler`: &lt;[HeadHandler](#headhandler)&gt; An interceptor for the initial HEAD data, useful for programmatically defining a range offset;
 
 ### <a id='xgetstore'></a> xget.store: [`Map`][map]
 
@@ -195,6 +196,13 @@ This ensures you can get a hash of an instancce of the data even while still str
 
 Returns the hash algorithm if any is in use.
 
+### xget.setHeadHandler()
+
+- `fn`: &lt;[HeadHandler](#headhandler)&gt; Handler to be set.
+- Returns: &lt;[boolean][]&gt; Whether or not the handler was successfully set.
+
+Sets an interceptor for the initial HEAD data, useful for programmatically defining a range offset. Returns `false` if the request has already been loaded, `true` if successfully set.
+
 ### <a id='xgetuse'></a> xget.use(tag, handler)
 
 - `tag`: &lt;[string][]&gt;
@@ -255,13 +263,24 @@ xget(URL)
 
 ```
 
+### <a id='headhandler'></a> HeadHandler: [`function`][function]
+
+- `props`: &lt;[object][]&gt;
+  - `headers`: &lt;[IncomingHttpHeaders][incominghttpheaders]&gt; HEAD headers from the URL.
+  - `acceptsRanges`: &lt;[boolean][]&gt; Whether or not the URL resource accepts byte ranges.
+- Returns: &lt;[number] | void&gt; An offset to begin streaming from. Analogous to `.start`. If void, defaults to `.start` or `0`;
+
+An interceptor for the initial HEAD data, useful for programmatically defining a range offset.
+
 ### <a id='loaddata'></a> LoadData: [`Object`][object]
 
 - `url`: &lt;[string][]&gt; The URL specified.
 - `size`: &lt;[number][]&gt; Finite number returned if server responds appropriately, else `Infinity`.
 - `start`: &lt;[number][]&gt; Sticks to specification if server allows chunking via `content-ranges` else, resets to `0`.
 - `chunkable`: &lt;[number][]&gt; Whether or not the URL feed can be chunked, supporting simultaneous connections.
+- `totalSize`: &lt;[number]&gt; Actual size of the resource without an offset.
 - `chunkStack`: &lt;[ChunkLoadInstance](#chunkloadinstance)[]&gt; The chunkstack array.
+- `headers`: &lt;[IncomingHttpHeaders][incominghttpheaders]&gt; The recieved array.
 
 ### <a id='chunkloadinstance'></a> ChunkLoadInstance: [`Object`][object]
 
