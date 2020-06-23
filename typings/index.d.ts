@@ -29,6 +29,7 @@ declare namespace xget {
     readonly ended: false;
     readonly loaded: false;
     readonly bytesRead: number;
+    start(): boolean;
     getHash(): Buffer;
     getHash(encoding: string): string;
     getHashAlgorithm(): string;
@@ -43,6 +44,7 @@ declare namespace xget {
 
   interface XGETOptions extends request.CoreOptions {
     use: UseObjectLiteral;
+    auto: boolean;
     hash: string;
     size: number;
     with: WithMiddlewareFn;

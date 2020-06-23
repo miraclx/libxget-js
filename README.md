@@ -82,6 +82,7 @@ With 10 simultaneous downloads. Retrying each one to a max of 10.
 * `retries`: &lt;[number][]&gt; Number of retries for each chunk. **Default**: `5`
 * `timeout`: &lt;[number][]&gt; Network response timeout (ms). **Default**: `20000`
 * `start`: &lt;[number][]&gt; Position to start feeding the stream from. **Default**: `0`
+* `auto`: &lt;[boolean][]&gt; Whether or not to start the request automatically or wait for a `request.start()` call (useful when chaining events you want to fire in order). **Default**: `true`
 * `size`: &lt;[number][]&gt; Number of bytes to stream off the response.
 * `hash`: &lt;[string][]&gt; Hash algorithm to use to create a [crypto.Hash][] instance computing the stream hash.
 * `use`: &lt;[object][]&gt; Key-value pairs of middlewares with which to pipe the response object through. keys are [strings][string], values are [Transformer generating functions](#usemiddlewarefn) (Alternatively, use the [xget.use()](#xgetuse) method).
@@ -169,6 +170,14 @@ This is emitted immediately the head data is gotten, preprocessed, parsed and us
 This `loadData` contains information like the actual size of the remote file and whether or not the server supports multiple connections, chunking, file resumption, etc.
 
 This event is fired prior to the `'set'` event.
+
+### xget.start()
+
+* Returns: &lt;[boolean][]&gt;
+
+Starts the request process if `options.auto` was set to false.
+
+Returns `true` if the request was started, `false` if it had already been started.
 
 ### xget.getHash([encoding])
 
