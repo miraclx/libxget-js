@@ -5,8 +5,9 @@
 /// <reference types="node" />
 
 import stream = require('stream');
-import request = require('request');
 import xresilient = require('xresilient');
+import {AxiosRequestConfig} from 'axios';
+import {IncomingHttpHeaders} from 'http';
 
 declare namespace xget {
 
@@ -42,7 +43,7 @@ declare namespace xget {
     (url: string, options?: XGETOptions): XGETStream;
   }
 
-  interface XGETOptions extends request.CoreOptions {
+  interface XGETOptions extends AxiosRequestConfig {
     use: UseObjectLiteral;
     auto: boolean;
     hash: string;
@@ -58,10 +59,10 @@ declare namespace xget {
     min: number;
     max: number;
     size: number;
-    stream: xresilient.ResilientStream<request.Request>;
+    stream: xresilient.ResilientStream<NodeJS.ReadableStream>;
   }
 
-  interface RetrySlice extends xresilient.RetrySlice<request.Request> {
+  interface RetrySlice extends xresilient.RetrySlice<NodeJS.ReadableStream> {
     store: MiddlewareStore;
     index: number;
     totalBytes: number;
@@ -74,6 +75,7 @@ declare namespace xget {
     start: number;
     chunkable: boolean;
     chunkStack: ChunkLoadInstance[];
+    headers: IncomingHttpHeaders;
   }
 
   type MiddlewareStore = Map<string, any>;
