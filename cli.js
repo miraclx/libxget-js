@@ -98,6 +98,7 @@ function processArgs(_url, outputFile, options) {
     timeout: options.timeout,
     start: options.startPos,
     retries: options.tries,
+    auto: false,
   };
 
   const request = xget(_url, opts);
@@ -190,6 +191,8 @@ function processArgs(_url, outputFile, options) {
     .on('error', err => {
       log('[!] An error occurred', `[${err}]`);
     });
+
+  request.start();
 }
 
 const command = commander
