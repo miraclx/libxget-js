@@ -94,7 +94,7 @@ function processArgs(_url, outputFile, options) {
   log(`URL:`, _url);
   const opts = {
     chunks: options.chunks,
-    hash: options.hash,
+    hash: options.hash === true ? 'md5' : options.hash,
     timeout: options.timeout,
     start: options.startPos,
     retries: options.tries,
@@ -232,7 +232,7 @@ const command = commander
   .option('-c, --continue [FILE]', `resume getting a partially downloaded file`)
   .option('-i, --start-pos <OFFSET>', 'start downloading from zero-based position OFFSET', 0)
   .option('-t, --tries <N>', 'set number of retries for each chunk to N. `inf` for infinite', 5)
-  .option('-s, --hash [ALGORITHM]', 'calculate hash sum for the requested content using the specified algorithm')
+  .option('-s, --hash [ALGORITHM]', 'calculate hash sum for the requested content using the specified algorithm (default: md5)')
   .option('-D, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
   .option('--timeout <N>', 'network inactivity timeout (ms)', 10000)
   .option('--no-directories', "don't create directories")
