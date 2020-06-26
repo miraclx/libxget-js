@@ -134,64 +134,92 @@ function processArgs(_url, outputFile, options) {
         if (data.meta === true) log(getRetryMessage(data));
         else data.store.get('progressBar').print(getRetryMessage(data));
       })
-      .on('error', () => {
-        if (request.store.has('progressBar')) request.store.get('progressBar').end();
-      })
       .on('end', () => {
-        request.store.get('progressBar').end(
-          getEndMessage(request)
-            .concat('')
-            .join('\n'),
-        );
+        const message = getEndMessage(request);
+        if (request.store.has('progressBar')) request.store.get('progressBar').end(message.concat('').join('\n'));
+        else log(message.join('\n'));
       });
   else request.on('retry', data => log(getRetryMessage(data))).on('end', () => log(getEndMessage(request).join('\n')));
 
-  request
-    .on('loaded', ({size, chunkable, chunkStack, headers}) => {
-      if ((!chunkable && options.startPos > 0) || options.continue)
+  request.on('error', err => {
+    const message = ['[!] An error occurred', `[${(err ? err.message : err.stack) || JSON.stringify(err)}]`].join(' ');
+    if (request.store.has('progressBar')) request.store.get('progressBar').end(message, '\n');
+    else error(message);
+  });
+
+  function hasPermissions(file, mode) {
+    try {
+      fs.accessSync(file, mode);
+    } catch {
+      return false;
+    }
+    return true;
+  }
+
+  function ensureWritableFile(filename) {
+    const dirName = path.dirname(filename);
+    if (!fs.existsSync(dirName)) throw new Error(`No such file or directory: ${dirName}`);
+    if (!hasPermissions(dirName, fs.constants.R_OK | fs.constants.W_OK)) throw new Error(`Permission denied: ${dirName}`);
+    if (fs.existsSync(filename) && !hasPermissions(filename, fs.constants.W_OK))
+      throw new Error(`Permission denied: ${filename}`);
+  }
+
+  request.setHeadHandler(({headers, acceptsRanges, chunks, totalSize}) => {
+    const {type} = contentType.parse(headers['content-type'] || 'application/octet-stream');
+    const ext = mime.extension(type);
+    const {filename} = headers['content-disposition'] ? contentDisposition.parse(headers['content-disposition']).parameters : {};
+    let offset;
+    outputFile = process.stdout.isTTY
+      ? (_path =>
+          path.join(
+            options.directoryPrefix || (path.isAbsolute(_path) ? '/' : '.'),
+            !options.directories ? path.basename(_path) : _path,
+          ))(
+          outputFile ||
+            (filename
+              ? decodeURI(filename)
+              : parseExt(
+                  parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
+                  `.${ext}` || '.html',
+                )),
+        )
+      : null;
+    if (outputFile) ensureWritableFile(outputFile);
+    if (options.continue) {
+      if (acceptsRanges) {
+        const resumeFile = options.continue === true ? outputFile : options.continue;
+        if (resumeFile) ensureWritableFile(resumeFile);
+        const {size} = fs.statSync(resumeFile);
+        log(cStringd(`:{color(yellow)}{i}:{color:close(yellow)} Resuming file ${resumeFile} at ${size}`));
+        offset = size;
+      } else
         log(
           cStringd(
-            `:{color(yellow)}{i}:{color:close(yellow)} Server doesn't support byteRanges. ${
-              options.startPos !== 0
-                ? ':{color(cyan)}`--start-pos`:{color:close(cyan)} ignored.'
-                : options.continue
-                ? `Cannot resume.`
-                : ''
-            }`,
+            ":{color(yellow)}{i}:{color:close(yellow)} Server doesn't support byteRanges. :{color(cyan)}`--continue`:{color:close(cyan)} ignored",
           ),
         );
+    }
+    if (!acceptsRanges && options.startPos > 0)
+      log(
+        cStringd(
+          ":{color(yellow)}{i}:{color:close(yellow)} Server doesn't support byteRanges. :{color(cyan)}`--start-pos`:{color:close(cyan)} ignored.",
+        ),
+      );
 
-      const {type} = contentType.parse(headers['content-type'] || 'application/octet-stream');
-      const ext = mime.extension(type);
-      const {filename} = headers['content-disposition']
-        ? contentDisposition.parse(headers['content-disposition']).parameters
-        : {};
-
-      outputFile = process.stdout.isTTY
-        ? (_path =>
-            path.join(
-              options.directoryPrefix || (path.isAbsolute(_path) ? '/' : '.'),
-              !options.directories ? path.basename(_path) : _path,
-            ))(
-            outputFile ||
-              (filename
-                ? decodeURI(filename)
-                : parseExt(
-                    parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
-                    `.${ext}` || '.html',
-                  )),
-          )
-        : null;
-
-      log(`Chunks: ${chunkable ? chunkStack.length : 1}`);
-      log(`Length: ${Number.isFinite(size) ? `${size} (${xbytes(size)})` : 'unspecified'} ${type ? `[${type}]` : ''}`);
-      log(`Saving to: ‘${outputFile || '<stdout>'}’...`);
-      request.pipe(outputFile ? fs.createWriteStream(outputFile) : process.stdout);
-    })
-    .on('error', err => {
-      log('[!] An error occurred', `[${err}]`);
-    });
-
+    log(`Chunks: ${chunks}`);
+    log(
+      `Length: ${
+        Number.isFinite(totalSize)
+          ? `${offset ? `${totalSize - offset}/` : ''}${totalSize} (${offset ? `${xbytes(totalSize - offset)}/` : ''}${xbytes(
+              totalSize,
+            )})`
+          : 'unspecified'
+      } ${type ? `[${type}]` : ''}`,
+    );
+    log(`Saving to: ‘${outputFile || '<stdout>'}’...`);
+    request.pipe(outputFile ? fs.createWriteStream(outputFile) : process.stdout);
+    return offset;
+  });
   request.start();
 }
 
