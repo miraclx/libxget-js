@@ -217,7 +217,7 @@ function processArgs(_url, outputFile, options) {
       } ${type ? `[${type}]` : ''}`,
     );
     log(`Saving to: ‘${outputFile || '<stdout>'}’...`);
-    request.pipe(outputFile ? fs.createWriteStream(outputFile) : process.stdout);
+    request.pipe(outputFile ? fs.createWriteStream(outputFile, {flags: offset ? 'a' : 'w'}) : process.stdout);
     return offset;
   });
   request.start();
@@ -229,7 +229,7 @@ const command = commander
   .arguments('<url> [outputFile]')
   .description(packageJson.description)
   .option('-n, --chunks <N>', 'set number of concurrent chunk streams to N', 5)
-  .option('-c, --continue', 'resume getting a partially downloaded file')
+  .option('-c, --continue [FILE]', `resume getting a partially downloaded file`)
   .option('-t, --tries <N>', 'set number of retries for each chunk to N. `inf` for infinite', 5)
   .option('-s, --hash [algorithm]', 'calculate hash sum for the requested content using the specified algorithm')
   .option('-D, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
