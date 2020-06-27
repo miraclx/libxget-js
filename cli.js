@@ -186,6 +186,14 @@ function processArgs(_url, outputFile, options) {
       : null;
     if (outputFile) ensureWritableFile(outputFile);
     if (options.continue) {
+      if (options.overwrite) {
+        log(
+          cStringd(
+            `:{color(yellow)}[i]:{color:close(yellow)} :{color(cyan)}\`--continue\`:{color:close(cyan)} and :{color(cyan)}\`--overwrite\`:{color:close(cyan)} cannot be used together; exiting...`,
+          ),
+        );
+        process.exit();
+      }
       if (acceptsRanges) {
         const resumeFile = options.continue === true ? outputFile : options.continue;
         if (resumeFile) ensureWritableFile(resumeFile);
@@ -217,6 +225,15 @@ function processArgs(_url, outputFile, options) {
       } ${type ? `[${type}]` : ''}`,
     );
     log(`Saving to: ‘${outputFile || '<stdout>'}’...`);
+    if (totalSize - offset === 0) {
+      log(cStringd(`:{color(green)}[i]:{color:close(green)} The file is already fully retrieved; exiting...`));
+      process.exit();
+    }
+    if (fs.existsSync(outputFile) && fs.statSync(outputFile).isFile())
+      if (!options.overwrite) {
+        error(cStringd(':{color(red)}[!]:{color:close(red)} File exists. Use `--overwrite` to overwrite'));
+        process.exit();
+      } else log(cStringd(':{color(yellow)}[i]:{color:close(yellow)} File exists. Overwriting...'));
     request.pipe(outputFile ? fs.createWriteStream(outputFile, {flags: offset ? 'a' : 'w'}) : process.stdout);
     return offset;
   });
@@ -234,6 +251,7 @@ const command = commander
   .option('-t, --tries <N>', 'set number of retries for each chunk to N. `inf` for infinite', 5)
   .option('-s, --hash [ALGORITHM]', 'calculate hash sum for the requested content using the specified algorithm (default: md5)')
   .option('-D, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
+  .option('-f, --overwrite', 'forcefully overwrite existing files')
   .option('--timeout <N>', 'network inactivity timeout (ms)', 10000)
   .option('--no-directories', "don't create directories")
   .option('--no-bar', "don't show the ProgressBar")
