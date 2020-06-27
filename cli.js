@@ -159,7 +159,7 @@ function processArgs(_url, outputFile, options) {
   function ensureWritableFile(filename) {
     const dirName = path.dirname(filename);
     if (!fs.existsSync(dirName)) throw new Error(`No such file or directory: ${dirName}`);
-    if (!hasPermissions(dirName, fs.constants.R_OK | fs.constants.W_OK)) throw new Error(`Permission denied: ${dirName}`);
+    if (!hasPermissions(dirName, fs.constants.R_OK)) throw new Error(`Permission denied: ${dirName}`);
     if (fs.existsSync(filename) && !hasPermissions(filename, fs.constants.W_OK))
       throw new Error(`Permission denied: ${filename}`);
   }
