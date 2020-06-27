@@ -53,7 +53,7 @@ function getRetryMessage({meta, index, retryCount, maxRetries, bytesRead, totalB
 
 function getEndMessage(request) {
   return [
-    `• Download Complete at ${request.bytesRead}`,
+    `• Download Complete at ${request.bytesRead} (${xbytes(request.bytesRead)})`,
     ...(request.getHash() ? [`• Hash(${request.getHashAlgorithm()}): ${request.getHash('hex')}`] : []),
   ];
 }
