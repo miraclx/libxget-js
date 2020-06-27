@@ -190,19 +190,19 @@ function processArgs(_url, outputFile, options) {
         const resumeFile = options.continue === true ? outputFile : options.continue;
         if (resumeFile) ensureWritableFile(resumeFile);
         const {size} = fs.statSync(resumeFile);
-        log(cStringd(`:{color(yellow)}{i}:{color:close(yellow)} Resuming file ${resumeFile} at ${size}`));
+        log(cStringd(`:{color(yellow)}[i]:{color:close(yellow)} Attempting to resume file ${resumeFile} at ${size}`));
         offset = size;
       } else
         log(
           cStringd(
-            ":{color(yellow)}{i}:{color:close(yellow)} Server doesn't support byteRanges. :{color(cyan)}`--continue`:{color:close(cyan)} ignored",
+            ":{color(yellow)}[i]:{color:close(yellow)} Server doesn't support byteRanges. :{color(cyan)}`--continue`:{color:close(cyan)} ignored",
           ),
         );
     }
     if (!acceptsRanges && options.startPos > 0)
       log(
         cStringd(
-          ":{color(yellow)}{i}:{color:close(yellow)} Server doesn't support byteRanges. :{color(cyan)}`--start-pos`:{color:close(cyan)} ignored.",
+          ":{color(yellow)}[i]:{color:close(yellow)} Server doesn't support byteRanges. :{color(cyan)}`--start-pos`:{color:close(cyan)} ignored.",
         ),
       );
 
