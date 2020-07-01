@@ -70,7 +70,7 @@ function processArgs(_url, outputFile, options) {
 
   function CHECK_FLAG_VAL(variable, flagref, untype) {
     // eslint-disable-next-line valid-typeof
-    if (typeof variable !== untype)
+    if (![null, undefined].includes(variable) && typeof variable !== untype)
       if (!(parseFloat(variable).toString() === variable && parseFloat(variable) >= 0))
         throw new XgetException(`\`${flagref}\` if specified, must be given a valid positive \`${untype}\` datatype`);
       else variable = parseInt(variable, 10);
