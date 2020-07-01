@@ -82,6 +82,7 @@ function processArgs(_url, outputFile, options) {
     options.chunks = CHECK_FLAG_VAL(options.chunks, '-n, --chunks', 'number');
     options.startPos = CHECK_FLAG_VAL(options.startPos, '--start-pos', 'number');
     options.timeout = CHECK_FLAG_VAL(options.timeout, '--timeout', 'number');
+    options.cacheSize = CHECK_FLAG_VAL(options.cacheSize, '--cache-size', 'number');
     options.verbose = options.verbose || false;
     options.continue = options.continue || false;
     options.singleBar = options.singleBar || false;
@@ -99,6 +100,8 @@ function processArgs(_url, outputFile, options) {
     start: options.startPos,
     retries: options.tries,
     auto: false,
+    cacheSize: options.cacheSize || 419430400,
+    cache: options.cache,
   };
 
   const request = xget(_url, opts);
@@ -253,6 +256,8 @@ const command = commander
   .option('-D, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
   .option('-f, --overwrite', 'forcefully overwrite existing files')
   .option('--timeout <N>', 'network inactivity timeout (ms)', 10000)
+  .option('--no-cache', 'disable in-memory caching')
+  .option('--cache-size <BYTES>', 'max memory capacity for the streaming process (default: 209715200 (200 MiB))')
   .option('--no-directories', "don't create directories")
   .option('--no-bar', "don't show the ProgressBar")
   .option('--pulsate-bar', 'show a pulsating bar')
