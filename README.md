@@ -68,6 +68,25 @@ xget("https://github.com/microsoft/TypeScript/archive/master.zip", {
 Get the master branch of the Typescript repository.
 With 10 simultaneous downloads. Retrying each one to a max of 10.
 
+## How it works
+
+``` txt
+                     |progress|    |     cacher    |
+xresilient[axios] -> || part || -> ||cachingstream|| -\
+xresilient[axios] -> || part || -> ||cachingstream|| -\
+xresilient[axios] -> || part || -> ||cachingstream|| -\
+xresilient[axios] -> || part || -> ||cachingstream||  -> chunkmerger [ -> hasher ] -> file
+xresilient[axios] -> || part || -> ||cachingstream|| -/
+xresilient[axios] -> || part || -> ||cachingstream|| -/
+xresilient[axios] -> || part || -> ||cachingstream|| -/
+                     |progress|    |     cacher    |
+```
+
+xget infers from a [HEAD](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD) response whether or not the server supports [byte-ranges](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Ranges).
+In the event that it does, it opens N connections feeding in non-overlapping segments of the resource. In order to retry broken connections, xget wraps the requests in [xresilient](https://github.com/miraclx/xresilient) streams to ensure proper retries and probable completion of the request. The streams are piped and tracked through the [progress bar](https://github.com/miraclx/xprogress) and into a [caching stream](lib/streamCache.js) and then all chunks are [merged](https://github.com/teambition/merge2) sequentially, in-place and in-order and piped into an optional hasher and finally the output file.
+
+The purpose of the caching stream is to ensure that other chunks can begin while the merger is still on the first. Liberating the download speed from the write speed, recieved chunks are buffered in memory to a maximum cache limit.
+
 ## API
 
 ### xget(url[, options])
