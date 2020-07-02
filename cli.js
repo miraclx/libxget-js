@@ -232,7 +232,7 @@ function processArgs(_url, outputFile, options) {
       log(cStringd(`:{color(green)}[i]:{color:close(green)} The file is already fully retrieved; exiting...`));
       process.exit();
     }
-    if (fs.existsSync(outputFile) && fs.statSync(outputFile).isFile())
+    if (!offset && fs.existsSync(outputFile) && fs.statSync(outputFile).isFile())
       if (!options.overwrite) {
         error(cStringd(':{color(red)}[!]:{color:close(red)} File exists. Use `--overwrite` to overwrite'));
         process.exit();
