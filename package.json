@@ -1,6 +1,6 @@
 {
   "name": "libxget",
-  "version": "0.7.3",
+  "version": "0.8.0",
   "description": "Non-interractive, chunk-based, web content retriever",
   "main": "lib/index.js",
   "types": "typings/index.d.ts",
