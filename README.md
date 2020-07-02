@@ -85,6 +85,8 @@ With 10 simultaneous downloads. Retrying each one to a max of 10.
 - `auto`: &lt;[boolean][]&gt; Whether or not to start the request automatically or wait for a `request.start()` call (useful when chaining events you want to fire in order). **Default**: `true`
 - `size`: &lt;[number][]&gt; Number of bytes to stream off the response.
 - `hash`: &lt;[string][]&gt; Hash algorithm to use to create a [crypto.Hash][] instance computing the stream hash.
+- `cache`: &lt;[number][]&gt; Whether or not to use an in-memory cache to enable read-aheads of pending chunks.
+- `cacheSize`: &lt;[boolean][]&gt; Custom maximum cache size (bytes).
 - `use`: &lt;[object][]&gt; Key-value pairs of middlewares with which to pipe the response object through. keys are [strings][string], values are [Transformer generating functions](#usemiddlewarefn) (Alternatively, use the [xget.use()](#xgetuse) method).
 - `with`: &lt;[object][]&gt; Key-value pairs of middlewares with which to pipe the dataslice object through. keys are [strings][string], values are [functions][function] whose return values are accessible within the [store](#storestack). (Alternatively, use the [xget.with()](#xgetwith) method).
 - `headHandler`: &lt;[HeadHandler](#headhandler)&gt; An interceptor for the initial HEAD data, useful for programmatically defining a range offset;

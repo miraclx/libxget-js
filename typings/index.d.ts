@@ -52,6 +52,8 @@ declare namespace xget {
     with: WithMiddlewareFn;
     start: number;
     chunks: number;
+    cache: boolean;
+    cacheSize: number;
     retries: number;
     timeout: number;
     headHandler: HeadHandler;
