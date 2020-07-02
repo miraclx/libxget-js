@@ -205,6 +205,13 @@ Returns the hash algorithm if any is in use.
 
 Sets an interceptor for the initial HEAD data, useful for programmatically defining a range offset. Returns `false` if the request has already been loaded, `true` if successfully set.
 
+### xget.setCacheCapacity()
+
+- `size`: &lt;[number][]&gt;
+- Returns: &lt;[XGETStream](#xgetstream)&gt;
+
+Set maximum capacity for internal cache.
+
 ### <a id='xgetuse'></a> xget.use(tag, handler)
 
 - `tag`: &lt;[string][]&gt;

@@ -34,6 +34,7 @@ declare namespace xget {
     getHash(): Buffer;
     getHash(encoding: string): string;
     getHashAlgorithm(): string;
+    setCacheSize(size: number): this;
     setHeadHandler(fn: HeadHandler): boolean;
     use(tag: string, fn: UseMiddlewareFn): this;
     with(tag: string, fn: WithMiddlewareFn): this;
