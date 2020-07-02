@@ -83,7 +83,7 @@ function processArgs(_url, outputFile, options) {
     options.startPos = CHECK_FLAG_VAL(options.startPos, '--start-pos', 'number');
     options.timeout = CHECK_FLAG_VAL(options.timeout, '--timeout', 'number');
     options.cacheSize = CHECK_FLAG_VAL(options.cacheSize, '--cache-size', 'number');
-    options.verbose = options.verbose || false;
+    // options.verbose = options.verbose || false;
     options.continue = options.continue || false;
     options.singleBar = options.singleBar || false;
     options.pulsateBar = options.pulsateBar || false;
@@ -262,8 +262,8 @@ const command = commander
   .option('--no-bar', "don't show the ProgressBar")
   .option('--pulsate-bar', 'show a pulsating bar')
   .option('--single-bar', 'show a single bar for the download, hide chunk-view [default when n(chunks) exceed printable space]')
-  .option('-q, --quiet', 'be stealth')
-  .option('-v, --verbose', 'be verbose')
+  // .option('-q, --quiet', 'be stealth')
+  // .option('-v, --verbose', 'be verbose')
   .version(`v${packageJson.version}`, '-V, --version')
   // Add header config
   // Authentication
