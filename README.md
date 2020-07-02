@@ -71,21 +71,24 @@ With 10 simultaneous downloads. Retrying each one to a max of 10.
 ## How it works
 
 ``` txt
-                     |progress|    |     cacher    |
-xresilient[axios] -> || part || -> ||cachingstream|| -\
-xresilient[axios] -> || part || -> ||cachingstream|| -\
-xresilient[axios] -> || part || -> ||cachingstream|| -\
-xresilient[axios] -> || part || -> ||cachingstream||  -> chunkmerger [ -> hasher ] -> file
-xresilient[axios] -> || part || -> ||cachingstream|| -/
-xresilient[axios] -> || part || -> ||cachingstream|| -/
-xresilient[axios] -> || part || -> ||cachingstream|| -/
-                     |progress|    |     cacher    |
+                             |progress|    |=========|
+     /- xresilient[axios] -> || part || -> || cache || -\
+     /- xresilient[axios] -> || part || -> || cache || -\
+     /- xresilient[axios] -> || part || -> || cache || -\
+URL ->  xresilient[axios] -> || part || -> || cache ||  -> chunkmerger [ -> hasher ] -> output
+     \- xresilient[axios] -> || part || -> || cache || -/
+     \- xresilient[axios] -> || part || -> || cache || -/
+     \- xresilient[axios] -> || part || -> || cache || -/
+                             |progress|    |=========|
 ```
 
-xget infers from a [HEAD](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD) response whether or not the server supports [byte-ranges](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Ranges).
-In the event that it does, it opens N connections feeding in non-overlapping segments of the resource. In order to retry broken connections, xget wraps the requests in [xresilient](https://github.com/miraclx/xresilient) streams to ensure proper retries and probable completion of the request. The streams are piped and tracked through the [progress bar](https://github.com/miraclx/xprogress) and into a [caching stream](lib/streamCache.js) and then all chunks are [merged](https://github.com/teambition/merge2) sequentially, in-place and in-order and piped into an optional hasher and finally the output file.
+xget, using the [axios](https://github.com/axios/axios) library first infers from a [HEAD](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD) response whether or not the server supports [byte-ranges](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Ranges).
+In the event that it does, it opens N connections feeding in non-overlapping segments of the resource. In order to retry broken connections, xget wraps the request generator in [xresilient](https://github.com/miraclx/xresilient) streams to ensure proper retries and probable completion of each chunk stream. The streams are piped and tracked through the [progress bar](https://github.com/miraclx/xprogress) and into a [caching stream](lib/streamCache.js) and then all chunks are [merged](https://github.com/teambition/merge2) sequentially, in-place and in-order and piped into an optional hasher and finally the output.
 
-The purpose of the caching stream is to ensure that other chunks can begin while the merger is still on the first. Liberating the download speed from the write speed, recieved chunks are buffered in memory to a maximum cache limit.
+The purpose of the caching stream is to ensure that other chunks can begin while the merger is still writing previous chunks. Liberating the download speed from the write speed, recieved chunks are buffered in memory to a maximum cache limit.
+The cacher also comes after the progress bar to ensure it properly measures the download speed and not the disk write speed, in the case where disk speed is slower than the network, although unlikely.
+
+The purpose of the hasher is to check the integrity of the merged chunks while writing instead of that being a separate process. Very useful for large-file downloads, so you only process the file once, while downloading.
 
 ## API
 
@@ -332,7 +335,7 @@ This information is passed into a handler whose return value is filed within the
 - `store`: &lt;[xget.store](#xgetstore)&gt;
 - Returns: &lt;[stream.Duplex][]&gt;
 
-## ClI Info
+## CLI Info
 
 - To avoid the terminal being cluttered while using pipes, direct other chained binaries' `stdout` and `stderr` to `/dev/null`
 
