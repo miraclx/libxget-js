@@ -100,7 +100,7 @@ function processArgs(_url, outputFile, options) {
     start: options.startPos,
     retries: options.tries,
     auto: false,
-    cacheSize: options.cacheSize || 419430400,
+    cacheSize: 'cacheSize' in options ? options.cacheSize : 419430400,
     cache: options.cache,
   };
 
