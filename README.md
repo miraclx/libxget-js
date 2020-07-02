@@ -95,7 +95,7 @@ The purpose of the caching stream is to ensure that other chunks can begin while
 - `options`: &lt;[XGETOptions](#xgetoptions)&gt;
 - Returns: &lt;[XGETStream](#xgetstream)&gt;
 
-### <a id='xgetoptions'></a> XGETOptions <sub>`extends`</sub> [RequestOpts][]: [`Object`][object]
+### <a id='xgetoptions'></a> XGETOptions <sub>`extends`</sub> [AxiosOpts][]: [`Object`][object]
 
 - `chunks`: &lt;[number][]&gt; Number of chunked-simultaneous downloads. **Default**: `5`
 - `retries`: &lt;[number][]&gt; Number of retries for each chunk. **Default**: `5`
@@ -368,12 +368,13 @@ npm run build
 [downloads-url]: https://npmjs.org/package/libxget
 [downloads-image]: https://badgen.net/npm/dm/libxget
 [xresilient]: https://github.com/miraclx/xresilient
-[requestopts]: https://github.com/request/request#requestoptions-callback
+[axiosopts]: https://github.com/axios/axios#request-config
 [resilientstream]: https://github.com/miraclx/xresilient#resilientstream
 [buffer]: https://nodejs.org/api/buffer.html#buffer_class_buffer
 [crypto.hash]: https://nodejs.org/api/crypto.html#crypto_crypto_createhash_algorithm_options
 [stream.duplex]: https://nodejs.org/api/stream.html#stream_new_stream_duplex_options
 [stream.readable]: https://nodejs.org/api/stream.html#stream_class_stream_readable
+[incominghttpheaders]: https://nodejs.org/api/http.html#http_message_headers
 [map]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map
 [error]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
 [number]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures#Number_type
