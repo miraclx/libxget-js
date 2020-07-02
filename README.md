@@ -20,7 +20,7 @@ This installs a CLI binary accessible with the `xget` command.
 ```bash
 # Check if the xget command has been installed and accessible on your path
 $ xget -V
-v0.8.0
+v0.8.0-1
 ```
 
 ## Usage
