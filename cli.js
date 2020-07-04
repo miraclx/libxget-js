@@ -31,23 +31,18 @@ const [log, error] = [, ,].fill(
 
 function getRetryMessage({meta, index, retryCount, maxRetries, bytesRead, totalBytes, lastErr}) {
   return cStringd(
-    [
-      ':{color(red)}{⯈}:{color:close(red)} ',
-      `:{color(cyan)}@${meta ? 'meta' : index + 1}:{color:close(cyan)}`,
-      `{:{color(yellow)}${retryCount}:{color:close(yellow)}${
-        Number.isFinite(maxRetries) ? `/:{color(yellow)}${maxRetries}:{color:close(yellow)}` : ''
-      }}: `,
-      lastErr
-        ? `${
-            lastErr.code ? `[:{color(yellow)}${lastErr.code}:{color:close(yellow)}] ` : ''
-          }(:{color(yellow)}${lastErr}:{color:close(yellow)}) `
-        : '',
-      totalBytes
-        ? `(:{color(cyan)}${
-            Number.isFinite(totalBytes) ? `${bytesRead}`.padStart(`${totalBytes}`.length, ' ') : bytesRead
-          }:{color:close(cyan)}${Number.isFinite(totalBytes) ? `/:{color(cyan)}${totalBytes}:{color:close(cyan)}` : ''})`
-        : '',
-    ].join(''),
+    ':{color(red)}{⯈}:{color:close(red)} :{color(cyan)}@:{metaIndex}:{color:close(cyan)}{:{color(yellow)}:{retryCount}:{color:close(yellow)}:{maxRetries}}: :{error}:{bytes}',
+    {
+      metaIndex: meta ? 'meta' : index + 1,
+      retryCount,
+      maxRetries: Number.isFinite(maxRetries) ? `/:{color(yellow)}${maxRetries}:{color:close(yellow)}` : '',
+      error: lastErr ? ':{lastErrCode}(:{color(yellow)}:{lastErr}:{color:close(yellow)}) ' : '',
+      lastErr,
+      lastErrCode: lastErr && lastErr.code ? `[:{color(yellow)}${lastErr.code}:{color:close(yellow)}] ` : '',
+      bytes: totalBytes ? '(:{color(cyan)}:{bytesRead}:{color:close(cyan)}:{totalBytes})' : '',
+      bytesRead: Number.isFinite(totalBytes) ? `${bytesRead}`.padStart(`${totalBytes}`.length, ' ') : bytesRead,
+      totalBytes: Number.isFinite(totalBytes) ? `/:{color(cyan)}${totalBytes}:{color:close(cyan)}` : '',
+    },
   );
 }
 
@@ -145,7 +140,10 @@ function processArgs(_url, outputFile, options) {
   else request.on('retry', data => log(getRetryMessage(data))).on('end', () => log(getEndMessage(request).join('\n')));
 
   request.on('error', err => {
-    const message = ['[!] An error occurred', `[${(err ? err.message : err.stack) || JSON.stringify(err)}]`].join(' ');
+    const message = cStringd(`:{color(red)}[!]:{color:close} :{error}`, {
+      error: 'index' in err ? 'An error occurred [:{errMessage}]' : ':{errMessage}',
+      errMessage: err && (err.message || err.stack),
+    });
     if (request.store.has('progressBar')) request.store.get('progressBar').end(message, '\n');
     else error(message);
   });
