@@ -270,7 +270,13 @@ const command = commander
   .option('--no-directories', "don't create directories")
   .option('--no-bar', "don't show the ProgressBar")
   .option('--pulsate-bar', 'show a pulsating bar')
-  .option('--single-bar', 'show a single bar for the download, hide chunk-view [default when n(chunks) exceed printable space]')
+  .option(
+    '--single-bar',
+    [
+      'show a single bar for the download, hide chunk-view',
+      '(default when number of chunks/segments exceed printable space)',
+    ].join('\n'),
+  )
   // .option('-q, --quiet', 'be stealth')
   // .option('-v, --verbose', 'be verbose')
   .version(`v${packageJson.version}`, '-V, --version')
