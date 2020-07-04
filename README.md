@@ -82,7 +82,7 @@ URL ->  xresilient[axios] -> || part || -> || cache ||  -> chunkmerger [ -> hash
                              |progress|    |=========|
 ```
 
-xget, using the [axios](https://github.com/axios/axios) library first infers from a [HEAD](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD) response whether or not the server supports [byte-ranges](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Ranges).
+xget, using the [axios](https://github.com/axios/axios) library first infers from an abrupt [GET](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET) response whether or not the server supports byte-ranges through [Accept-Ranges](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Ranges) or [Content-Range](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Range).
 In the event that it does, it opens N connections feeding in non-overlapping segments of the resource. In order to retry broken connections, xget wraps the request generator in [xresilient](https://github.com/miraclx/xresilient) streams to ensure proper retries and probable completion of each chunk stream. The streams are piped and tracked through the [progress bar](https://github.com/miraclx/xprogress) and into a [caching stream](lib/streamCache.js) and then all chunks are [merged](https://github.com/teambition/merge2) sequentially, in-place and in-order and piped into an optional hasher and finally the output.
 
 The purpose of the caching stream is to ensure that other chunks can begin while the merger is still writing previous chunks. Liberating the download speed from the write speed, recieved chunks are buffered in memory to a maximum cache limit.
@@ -111,7 +111,7 @@ The purpose of the hasher is to check the integrity of the merged chunks while w
 - `cacheSize`: &lt;[boolean][]&gt; Custom maximum cache size (bytes).
 - `use`: &lt;[object][]&gt; Key-value pairs of middlewares with which to pipe the response object through. keys are [strings][string], values are [Transformer generating functions](#usemiddlewarefn) (Alternatively, use the [xget.use()](#xgetuse) method).
 - `with`: &lt;[object][]&gt; Key-value pairs of middlewares with which to pipe the dataslice object through. keys are [strings][string], values are [functions][function] whose return values are accessible within the [store](#storestack). (Alternatively, use the [xget.with()](#xgetwith) method).
-- `headHandler`: &lt;[HeadHandler](#headhandler)&gt; An interceptor for the initial HEAD data, useful for programmatically defining a range offset;
+- `headHandler`: &lt;[HeadHandler](#headhandler)&gt; An interceptor for the initial headers, useful for programmatically defining a range offset;
 
 ### <a id='xgetstore'></a> xget.store: [`Map`][map]
 
@@ -190,11 +190,11 @@ Based on the spec of the [xresilient][] module, chunks are reinitialized once an
 
 - `loadData`: &lt;[LoadData](#loaddata)&gt; The pre-computed config for the loaded data slice.
 
-This is emitted immediately the head data is gotten, preprocessed, parsed and used to tailor the configuration for the chunk setup.
+This is emitted right after the initial headers data is gotten, preprocessed, parsed and used to tailor the configuration for the chunk setup.
 
 This `loadData` contains information like the actual size of the remote file and whether or not the server supports multiple connections, chunking, file resumption, etc.
 
-This event is fired prior to the `'set'` event.
+This event is fired after calling the headHandler and prior to the `'set'` event.
 
 ### xget.start()
 
@@ -225,7 +225,7 @@ Returns the hash algorithm if any is in use.
 - `fn`: &lt;[HeadHandler](#headhandler)&gt; Handler to be set.
 - Returns: &lt;[boolean][]&gt; Whether or not the handler was successfully set.
 
-Sets an interceptor for the initial HEAD data, useful for programmatically defining a range offset. Returns `false` if the request has already been loaded, `true` if successfully set.
+Sets an interceptor for the initial headers, useful for programmatically defining a range offset. Returns `false` if the request has already been loaded, `true` if successfully set.
 
 ### xget.setCacheCapacity()
 
@@ -297,11 +297,11 @@ xget(URL)
 ### <a id='headhandler'></a> HeadHandler: [`function`][function]
 
 - `props`: &lt;[object][]&gt;
-  - `headers`: &lt;[IncomingHttpHeaders][incominghttpheaders]&gt; HEAD headers from the URL.
+  - `headers`: &lt;[IncomingHttpHeaders][incominghttpheaders]&gt; GET headers from the URL.
   - `acceptsRanges`: &lt;[boolean][]&gt; Whether or not the URL resource accepts byte ranges.
-- Returns: &lt;[number] | void&gt; An offset to begin streaming from. Analogous to `.start`. If void, defaults to `.start` or `0`;
+- Returns: &lt;[number] | void&gt; An offset to begin streaming from. Analogous to the `.start` field in [XGETOptions](#xgetoptions). If void, defaults to `.start` or `0`;
 
-An interceptor for the initial HEAD data, useful for programmatically defining a range offset.
+An interceptor for the initial GET data, useful for programmatically defining a range offset.
 
 ### <a id='loaddata'></a> LoadData: [`Object`][object]
 
@@ -311,7 +311,7 @@ An interceptor for the initial HEAD data, useful for programmatically defining a
 - `chunkable`: &lt;[number][]&gt; Whether or not the URL feed can be chunked, supporting simultaneous connections.
 - `totalSize`: &lt;[number]&gt; Actual size of the resource without an offset.
 - `chunkStack`: &lt;[ChunkLoadInstance](#chunkloadinstance)[]&gt; The chunkstack array.
-- `headers`: &lt;[IncomingHttpHeaders][incominghttpheaders]&gt; The recieved array.
+- `headers`: &lt;[IncomingHttpHeaders][incominghttpheaders]&gt; The headers object.
 
 ### <a id='chunkloadinstance'></a> ChunkLoadInstance: [`Object`][object]
 
@@ -325,7 +325,7 @@ An interceptor for the initial HEAD data, useful for programmatically defining a
 - `loadData`: &lt;[LoadData](#loaddata)&gt;
 
 This `handler` is called immediately after metadata from URL is loaded that describes the response.
-That is, pre-streaming data from the HEAD like size (content-length), content-type, filename (content-disposition), whether or not it's chunkable (accept-ranges) and a couple of other criterias.
+That is, pre-streaming data from the GET response like size (content-length), content-type, filename (content-disposition), whether or not it's chunkable (accept-ranges, content-range) and a couple of other criterias.
 
 This information is passed into a handler whose return value is filed within the [store](#xgetstore) referenced by the `tag`.
 
