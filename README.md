@@ -100,7 +100,7 @@ The purpose of the hasher is to check the integrity of the merged chunks while w
 
 ### <a id='xgetoptions'></a> XGETOptions <sub>`extends`</sub> [AxiosOpts][]: [`Object`][object]
 
-- `chunks`: &lt;[number][]&gt; Number of chunked-simultaneous downloads. **Default**: `5`
+- `chunks`: &lt;[number][]&gt; Maximum number of non-overlapping chunk connections. **Default**: `5`
 - `retries`: &lt;[number][]&gt; Number of retries for each chunk. **Default**: `5`
 - `timeout`: &lt;[number][]&gt; Network response timeout (ms). **Default**: `20000`
 - `start`: &lt;[number][]&gt; Position to start feeding the stream from. **Default**: `0`
