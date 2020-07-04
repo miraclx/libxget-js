@@ -221,9 +221,9 @@ function processArgs(_url, outputFile, options) {
     log(
       `Length: ${
         Number.isFinite(totalSize)
-          ? `${offset ? `${totalSize - offset}/` : ''}${totalSize} (${offset ? `${xbytes(totalSize - offset)}/` : ''}${xbytes(
-              totalSize,
-            )})`
+          ? `${offset !== undefined ? `${totalSize - offset}/` : ''}${totalSize} (${
+              offset !== undefined ? `${xbytes(totalSize - offset)}/` : ''
+            }${xbytes(totalSize)})`
           : 'unspecified'
       } ${type ? `[${type}]` : ''}`,
     );
@@ -232,12 +232,12 @@ function processArgs(_url, outputFile, options) {
       log(cStringd(`:{color(green)}[i]:{color:close(green)} The file is already fully retrieved; exiting...`));
       process.exit();
     }
-    if (!offset && fs.existsSync(outputFile) && fs.statSync(outputFile).isFile())
+    if (offset === undefined && fs.existsSync(outputFile) && fs.statSync(outputFile).isFile())
       if (!options.overwrite) {
         error(cStringd(':{color(red)}[!]:{color:close(red)} File exists. Use `--overwrite` to overwrite'));
         process.exit();
       } else log(cStringd(':{color(yellow)}[i]:{color:close(yellow)} File exists. Overwriting...'));
-    request.pipe(outputFile ? fs.createWriteStream(outputFile, {flags: offset ? 'a' : 'w'}) : process.stdout);
+    request.pipe(outputFile ? fs.createWriteStream(outputFile, {flags: offset !== undefined ? 'a' : 'w'}) : process.stdout);
     return offset;
   });
   request.start();
