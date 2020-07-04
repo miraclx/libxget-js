@@ -242,7 +242,9 @@ function processArgs(_url, outputFile, options) {
         process.exit();
       } else log(cStringd(':{color(yellow)}[i]:{color:close(yellow)} File exists. Overwriting...'));
     request.pipe(
-      outputFile ? fs.createWriteStream(outputFile, {flags: hasOffset && isSameResumeFile ? 'a' : 'w'}) : process.stdout,
+      outputFile
+        ? fs.createWriteStream(outputFile, {flags: (hasOffset && isSameResumeFile) || options.forceAppend ? 'a' : 'w'})
+        : process.stdout,
     );
     return offset;
   });
@@ -264,6 +266,7 @@ const command = commander
   .option('--timeout <N>', 'network inactivity timeout (ms)', 10000)
   .option('--no-cache', 'disable in-memory caching')
   .option('--cache-size <BYTES>', 'max memory capacity for the streaming process (default: 209715200 (200 MiB))')
+  .option('--force-append', 'whether or not to force append the downloaded content to the output file')
   .option('--no-directories', "don't create directories")
   .option('--no-bar', "don't show the ProgressBar")
   .option('--pulsate-bar', 'show a pulsating bar')
