@@ -248,7 +248,7 @@ const command = commander
   .usage('[options] <url> [outputFile]')
   .arguments('<url> [outputFile]')
   .description(packageJson.description)
-  .option('-n, --chunks <N>', 'set number of concurrent chunk streams to N', 5)
+  .option('-n, --chunks <N>', 'maximum number of concurrent chunk connections', 5)
   .option('-c, --continue [FILE]', `resume getting a partially downloaded file`)
   .option('-i, --start-pos <OFFSET>', 'start downloading from zero-based position OFFSET', 0)
   .option('-t, --tries <N>', 'set number of retries for each chunk to N. `inf` for infinite', 5)
