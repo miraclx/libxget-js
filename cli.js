@@ -228,7 +228,7 @@ function processArgs(_url, outputFile, options) {
       } ${type ? `[${type}]` : ''}`,
     );
     log(`Saving to: ‘${outputFile || '<stdout>'}’...`);
-    if (totalSize - offset === 0) {
+    if (totalSize - offset <= 0) {
       log(cStringd(`:{color(green)}[i]:{color:close(green)} The file is already fully retrieved; exiting...`));
       process.exit();
     }
