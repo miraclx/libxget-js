@@ -218,12 +218,13 @@ function processArgs(_url, outputFile, options) {
         ),
       );
 
+    const hasOffset = offset !== undefined && acceptsRanges;
     log(`Chunks: ${chunks}`);
     log(
       `Length: ${
         Number.isFinite(totalSize)
-          ? `${offset !== undefined && acceptsRanges ? `${totalSize - offset}/` : ''}${totalSize} (${
-              offset !== undefined && acceptsRanges ? `${xbytes(totalSize - offset)}/` : ''
+          ? `${hasOffset ? `${totalSize - offset}/` : ''}${totalSize} (${
+              hasOffset ? `${xbytes(totalSize - offset)}/` : ''
             }${xbytes(totalSize)})`
           : 'unspecified'
       } ${type ? `[${type}]` : ''}`,
@@ -238,9 +239,7 @@ function processArgs(_url, outputFile, options) {
         error(cStringd(':{color(red)}[!]:{color:close(red)} File exists. Use `--overwrite` to overwrite'));
         process.exit();
       } else log(cStringd(':{color(yellow)}[i]:{color:close(yellow)} File exists. Overwriting...'));
-    request.pipe(
-      outputFile ? fs.createWriteStream(outputFile, {flags: offset !== undefined && acceptsRanges ? 'a' : 'w'}) : process.stdout,
-    );
+    request.pipe(outputFile ? fs.createWriteStream(outputFile, {flags: hasOffset ? 'a' : 'w'}) : process.stdout);
     return offset;
   });
   request.start();
