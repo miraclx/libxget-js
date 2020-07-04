@@ -171,7 +171,7 @@ function processArgs(_url, outputFile, options) {
     const {type} = contentType.parse(headers['content-type'] || 'application/octet-stream');
     const ext = mime.extension(type);
     const {filename} = headers['content-disposition'] ? contentDisposition.parse(headers['content-disposition']).parameters : {};
-    let offset;
+    let [offset, isSameResumeFile, outputFileExists, outputFileStat] = [, false, , ,];
     outputFile = process.stdout.isTTY
       ? (_path =>
           path.join(
@@ -188,6 +188,7 @@ function processArgs(_url, outputFile, options) {
         )
       : null;
     if (outputFile) ensureWritableFile(outputFile);
+    if ((outputFileExists = fs.existsSync(outputFile))) outputFileStat = fs.statSync(outputFile);
     if (options.continue) {
       if (options.overwrite) {
         log(
@@ -200,9 +201,10 @@ function processArgs(_url, outputFile, options) {
       const resumeFile = options.continue === true ? outputFile : options.continue;
       if (fs.existsSync(resumeFile)) {
         if (resumeFile) ensureWritableFile(resumeFile);
-        const {size} = fs.statSync(resumeFile);
-        log(cStringd(`:{color(yellow)}[i]:{color:close(yellow)} Attempting to resume file ${resumeFile} at ${size}`));
-        offset = size;
+        const resumeFileStat = fs.statSync(resumeFile);
+        ({size: offset} = resumeFileStat);
+        log(cStringd(`:{color(yellow)}[i]:{color:close(yellow)} Attempting to resume file ${resumeFile} at ${offset}`));
+        isSameResumeFile = outputFileExists && resumeFileStat.ino === outputFileStat.ino;
         if (!acceptsRanges)
           log(
             cStringd(
@@ -234,12 +236,14 @@ function processArgs(_url, outputFile, options) {
       log(cStringd(`:{color(green)}[i]:{color:close(green)} The file is already fully retrieved; exiting...`));
       process.exit();
     }
-    if (offset === undefined && fs.existsSync(outputFile) && fs.statSync(outputFile).isFile())
+    if (offset === undefined && outputFileExists && outputFileStat.isFile())
       if (!options.overwrite) {
         error(cStringd(':{color(red)}[!]:{color:close(red)} File exists. Use `--overwrite` to overwrite'));
         process.exit();
       } else log(cStringd(':{color(yellow)}[i]:{color:close(yellow)} File exists. Overwriting...'));
-    request.pipe(outputFile ? fs.createWriteStream(outputFile, {flags: hasOffset ? 'a' : 'w'}) : process.stdout);
+    request.pipe(
+      outputFile ? fs.createWriteStream(outputFile, {flags: hasOffset && isSameResumeFile ? 'a' : 'w'}) : process.stdout,
+    );
     return offset;
   });
   request.start();
