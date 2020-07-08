@@ -86,7 +86,14 @@ declare namespace xget {
 
   type MiddlewareStore = Map<string, any>;
 
-  type HeadHandler = (props: {headers: IncomingHttpHeaders, acceptsRanges: boolean}) => number | void;
+  interface HeaderSlice {
+    chunks: number;
+    headers: IncomingHttpHeaders;
+    totalSize: number;
+    acceptsRanges: boolean;
+  }
+
+  type HeadHandler = (props: HeaderSlice) => number | void;
   type UseMiddlewareFn = (dataSlice: ChunkLoadInstance, store: MiddlewareStore) => NodeJS.ReadWriteStream;
   type WithMiddlewareFn = (loadData: LoadDataSlice) => any;
 
