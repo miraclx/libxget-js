@@ -60,7 +60,7 @@
     "mime-types": "^2.1.26",
     "stream.pipeline-shim": "^1.1.0",
     "stringd-colors": "^1.9.0",
-    "xbytes": "^1.6.1",
+    "xbytes": "^1.6.2",
     "xprogress": "^0.17.2",
     "xresilient": "^0.8.1"
   }
