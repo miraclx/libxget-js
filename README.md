@@ -12,10 +12,14 @@
 Via [NPM][npm]:
 
 ```bash
+# as a dependency
 npm install libxget
+
+# as a command
+npm install -g libxget
 ```
 
-This installs a CLI binary accessible with the `xget` command.
+This installs a CLI command accessible with the `xget` command.
 
 ```bash
 # Check if the xget command has been installed and accessible on your path
