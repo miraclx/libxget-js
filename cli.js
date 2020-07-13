@@ -127,26 +127,26 @@ function processArgs(_url, outputFile, options) {
           },
         ),
       )
-      .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size))
-      .on('retry', data => {
-        if (data.meta === true) log(getRetryMessage(data));
-        else data.store.get('progressBar').print(getRetryMessage(data));
-      })
-      .on('end', () => {
-        const message = getEndMessage(request);
-        if (request.store.has('progressBar')) request.store.get('progressBar').end(message.concat('').join('\n'));
-        else log(message.join('\n'));
-      });
-  else request.on('retry', data => log(getRetryMessage(data))).on('end', () => log(getEndMessage(request).join('\n')));
+      .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size));
 
-  request.on('error', err => {
-    const message = cStringd(`:{color(red)}[!]:{color:close} :{error}`, {
-      error: 'index' in err ? 'An error occurred [:{errMessage}]' : ':{errMessage}',
-      errMessage: err && (err.message || err.stack),
+  request
+    .on('retry', data => {
+      if (request.store.has('progressBar')) data.store.get('progressBar').print(getRetryMessage(data));
+      else log(getRetryMessage(data));
+    })
+    .on('end', () => {
+      const message = getEndMessage(request);
+      if (request.store.has('progressBar')) request.store.get('progressBar').end(message.concat('').join('\n'));
+      else log(message.join('\n'));
+    })
+    .on('error', err => {
+      const message = cStringd(`:{color(red)}[!]:{color:close} :{error}`, {
+        error: 'index' in err ? 'An error occurred [:{errMessage}]' : ':{errMessage}',
+        errMessage: err && (err.message || err.stack),
+      });
+      if (request.store.has('progressBar')) request.store.get('progressBar').end(message, '\n');
+      else error(message);
     });
-    if (request.store.has('progressBar')) request.store.get('progressBar').end(message, '\n');
-    else error(message);
-  });
 
   function hasPermissions(file, mode) {
     try {
