@@ -62,6 +62,6 @@
     "stringd-colors": "^1.9.0",
     "xbytes": "^1.6.2",
     "xprogress": "^0.17.3",
-    "xresilient": "^0.8.1-1"
+    "xresilient": "^0.8.2"
   }
 }
