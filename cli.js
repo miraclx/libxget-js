@@ -209,6 +209,14 @@ function processArgs(_url, outputFile, options) {
               ":{color(yellow)}[i]:{color:close(yellow)} Server doesn't support byteRanges. :{color(cyan)}`--continue`:{color:close(cyan)} ignored",
             ),
           );
+      } else {
+        error(
+          cStringd(
+            ':{color(red)}[i]:{color:close(red)} :{color(cyan)}`--continue`:{color:close(cyan)}: No such file or directory: :{resumeFile}',
+            {resumeFile},
+          ),
+        );
+        process.exit();
       }
     }
     if (!acceptsRanges && options.startPos > 0)
