@@ -165,11 +165,11 @@ function processArgs(_url, outputFile, options) {
       throw new Error(`Permission denied: ${filename}`);
   }
 
-  request.setHeadHandler(({headers, acceptsRanges, chunks, totalSize}) => {
+  request.setHeadHandler(({headers, acceptsRanges, start, chunks, totalSize}) => {
     const {type} = contentType.parse(headers['content-type'] || 'application/octet-stream');
     const ext = mime.extension(type);
     const {filename} = headers['content-disposition'] ? contentDisposition.parse(headers['content-disposition']).parameters : {};
-    let [offset, isSameResumeFile, outputFileExists, outputFileStat] = [, false, , ,];
+    let [offset, isSameResumeFile, outputFileExists, outputFileStat] = [start, false, , ,];
     outputFile = process.stdout.isTTY
       ? (_path =>
           path.join(
