@@ -303,6 +303,7 @@ xget(URL)
 - `props`: &lt;[object][]&gt;
   - `chunks`: &lt;[number][]&gt; Number of chunks the resource can simultaneously provide.
   - `headers`: &lt;[IncomingHttpHeaders][incominghttpheaders]&gt; GET headers from the URL.
+  - `start`: &lt;[number][]&gt; Relayed `.start` field from [XGETOptions](#xgetoptions).
   - `totalSize`: &lt;[number][]&gt; Actual size of the resource without an offset.
   - `acceptsRanges`: &lt;[boolean][]&gt; Whether or not the URL resource accepts byte ranges.
 - Returns: &lt;[number] | void&gt; An offset to begin streaming from. Analogous to the `.start` field in [XGETOptions](#xgetoptions). If void, defaults to `.start` or `0`;

@@ -89,6 +89,7 @@ declare namespace xget {
   interface HeaderSlice {
     chunks: number;
     headers: IncomingHttpHeaders;
+    start: number;
     totalSize: number;
     acceptsRanges: boolean;
   }
