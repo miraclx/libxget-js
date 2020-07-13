@@ -189,9 +189,9 @@ function processArgs(_url, outputFile, options) {
     if ((outputFileExists = fs.existsSync(outputFile))) outputFileStat = fs.statSync(outputFile);
     if (options.continue) {
       if (options.overwrite) {
-        log(
+        error(
           cStringd(
-            `:{color(yellow)}[i]:{color:close(yellow)} :{color(cyan)}\`--continue\`:{color:close(cyan)} and :{color(cyan)}\`--overwrite\`:{color:close(cyan)} cannot be used together; exiting...`,
+            `:{color(red)}[i]:{color:close(red)} :{color(cyan)}\`--continue\`:{color:close(cyan)} and :{color(cyan)}\`--overwrite\`:{color:close(cyan)} cannot be used together; exiting...`,
           ),
         );
         process.exit();
