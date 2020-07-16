@@ -177,12 +177,13 @@ function processArgs(_url, outputFile, options) {
             !options.directories ? path.basename(_path) : _path,
           ))(
           outputFile ||
-            (filename
-              ? decodeURI(filename)
-              : parseExt(
+            decodeURIComponent(
+              filename ||
+                parseExt(
                   parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
                   `.${ext}` || '.html',
-                )),
+                ),
+            ),
         )
       : null;
     if (outputFile) ensureWritableFile(outputFile);
