@@ -286,7 +286,7 @@ const command = commander
   )
   // .option('-q, --quiet', 'be stealth')
   // .option('-v, --verbose', 'be verbose')
-  .version(`v${packageJson.version}`, '-V, --version')
+  .version(`v${packageJson.version}`, '-v, --version')
   // Add header config
   // Authentication
   // POST Request

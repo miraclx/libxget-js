@@ -23,7 +23,7 @@ This installs a CLI command accessible with the `xget` command.
 
 ```bash
 # Check if the xget command has been installed and accessible on your path
-$ xget -V
+$ xget -v
 v0.8.2-1
 ```
 
