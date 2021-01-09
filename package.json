@@ -50,17 +50,17 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "axios": "^0.19.2",
-    "commander": "^4.1.1",
+    "axios": "^0.21.1",
+    "commander": "^6.2.1",
     "content-disposition": "^0.5.3",
     "content-type": "^1.0.4",
     "http-range": "^1.0.0",
     "linkedlist": "^1.0.1",
-    "merge2": "^1.3.0",
-    "mime-types": "^2.1.26",
+    "merge2": "^1.4.1",
+    "mime-types": "^2.1.28",
     "stream.pipeline-shim": "^1.1.0",
     "stringd-colors": "^1.9.0",
-    "xbytes": "^1.6.2",
+    "xbytes": "^1.7.0",
     "xprogress": "^0.17.3",
     "xresilient": "^0.8.2"
   }
