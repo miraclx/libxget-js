@@ -50,7 +50,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "commander": "^6.2.1",
     "content-disposition": "^0.5.3",
     "content-type": "^1.0.4",
