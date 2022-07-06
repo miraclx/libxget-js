@@ -1,21 +1,22 @@
 #!/usr/bin/env node
-const fs = require('fs');
-const url = require('url');
-const tty = require('tty');
-const path = require('path');
-const util = require('util');
+import fs from 'fs';
+import url from 'url';
+import tty from 'tty';
+import path from 'path';
+import util from 'util';
 
-const xbytes = require('xbytes');
-const mime = require('mime-types');
-const commander = require('commander');
-const xprogress = require('xprogress');
-const cStringd = require('stringd-colors');
-const contentType = require('content-type');
-const contentDisposition = require('content-disposition');
+import xbytes from 'xbytes';
+import mime from 'mime-types';
+import commander from 'commander';
+import xprogress from 'xprogress';
+import cStringd from 'stringd-colors';
+import contentType from 'content-type';
+import contentDisposition from 'content-disposition';
 
-const xget = require('.');
-const packageJson = require('./package.json');
-const {XgetException} = require('./lib/xgetception');
+import xget from './lib/index.js';
+import {XgetException} from './lib/xgetception.js';
+
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 const [log, error] = [, ,].fill(
   (function ninjaLoggers() {
@@ -64,7 +65,6 @@ function processArgs(_url, outputFile, options) {
     error('\x1b[31m[i]\x1b[0m Please enter a valid URL'), process.exit(1);
 
   function CHECK_FLAG_VAL(variable, flagref, untype) {
-    // eslint-disable-next-line valid-typeof
     if (![null, undefined].includes(variable) && typeof variable !== untype)
       if (!(parseFloat(variable).toString() === variable && parseFloat(variable) >= 0))
         throw new XgetException(`\`${flagref}\` if specified, must be given a valid positive \`${untype}\` datatype`);
@@ -257,6 +257,8 @@ function processArgs(_url, outputFile, options) {
   });
   request.start();
 }
+
+let packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json')).toString());
 
 const command = commander
   .name('xget')
