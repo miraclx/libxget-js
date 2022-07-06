@@ -24,7 +24,7 @@ This installs a CLI command accessible with the `xget` command.
 ```bash
 # Check if the xget command has been installed and accessible on your path
 $ xget -v
-v0.8.2-1
+v0.10.0
 ```
 
 ## Usage
@@ -52,17 +52,8 @@ Use `--help` to see full usage documentation.
 ### Programmatically
 
 ```javascript
-// Node CommonJS
-const xget = require("libxget");
-// Or ES6 Modules
 import xget from "libxget";
-// Or Typescript
-import * as xget from "libxget";
-```
 
-#### Examples
-
-```javascript
 xget("https://github.com/microsoft/TypeScript/archive/master.zip", {
   chunks: 10,
   retries: 10,
@@ -355,14 +346,13 @@ xget https://myserver.com/movie.mp4 | vlc - > /dev/null 2>&1
 
 ### Building
 
-Feel free to clone, use in adherance to the [license](#license) and perhaps send pull requests
+Feel free to clone, use in adherance to the [license](#license). Pull requests are very much welcome.
 
 ```bash
 git clone https://github.com/miraclx/libxget-js.git
 cd libxget-js
 npm install
 # hack on code
-npm run build
 ```
 
 ## License
