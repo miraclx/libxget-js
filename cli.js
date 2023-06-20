@@ -60,7 +60,7 @@ function parseExt(npath, ext) {
 }
 
 function processArgs(_url, outputFile, options) {
-  const parsedUrl = url.parse(_url);
+  const parsedUrl = new URL(_url);
   if (!['protocol', 'hostname'].every(item => parsedUrl[item]))
     error('\x1b[31m[i]\x1b[0m Please enter a valid URL'), process.exit(1);
 
