@@ -1,6 +1,6 @@
 {
   "name": "libxget",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Non-interractive, chunk-based, web content retriever",
   "exports": "./lib/index.js",
   "type": "module",
