@@ -59,7 +59,7 @@
     "mime-types": "^2.1.28",
     "stringd-colors": "^1.10.0",
     "xbytes": "^1.7.0",
-    "xprogress": "^0.19.1",
+    "xprogress": "^0.20.0",
     "xresilient": "^0.8.2"
   },
   "devDependencies": {

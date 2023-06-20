@@ -8,13 +8,13 @@ import util from 'util';
 import xbytes from 'xbytes';
 import mime from 'mime-types';
 import commander from 'commander';
-import xprogress from 'xprogress';
 import cStringd from 'stringd-colors';
 import contentType from 'content-type';
 import contentDisposition from 'content-disposition';
 
 import xget from './lib/index.js';
 import {XgetException} from './lib/xgetception.js';
+import ProgressBar, {getPersistentStdout} from 'xprogress';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -72,6 +72,7 @@ function processArgs(_url, outputFile, options) {
     return variable;
   }
 
+  let barWriteStream;
   try {
     options.tries = CHECK_FLAG_VAL(options.tries === 'inf' ? Infinity : options.tries, '-t, --tries', 'number');
     options.chunks = CHECK_FLAG_VAL(options.chunks, '-n, --chunks', 'number');
@@ -82,6 +83,7 @@ function processArgs(_url, outputFile, options) {
     options.continue = options.continue || false;
     options.singleBar = options.singleBar || false;
     options.pulsateBar = options.pulsateBar || false;
+    if (options.bar && null === (barWriteStream = getPersistentStdout())) options.bar = false;
   } catch (er) {
     error('\x1b[31m[i]\x1b[0m', er.message);
     process.exit(1);
@@ -104,10 +106,11 @@ function processArgs(_url, outputFile, options) {
   if (options.bar)
     request
       .with('progressBar', ({size, chunkStack}) =>
-        xprogress.stream(
+        ProgressBar.stream(
           size,
           chunkStack.map(chunk => chunk.size),
           {
+            barWriteStream,
             label: outputFile || '<stdout>',
             forceFirst: options.singleBar || chunkStack.length > 20,
             length: 40,
