@@ -15,6 +15,7 @@ import contentDisposition from 'content-disposition';
 import xget from './lib/index.js';
 import {XgetException} from './lib/xgetception.js';
 import ProgressBar, {getPersistentStdout} from 'xprogress';
+import StreamCache from './lib/streamCache.js';
 
 const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
@@ -90,6 +91,8 @@ function processArgs(_url, outputFile, options) {
   }
 
   log(`URL:`, _url);
+
+  let cache = new StreamCache({size: 'cacheSize' in options ? options.cacheSize : 1 << 29});
   const opts = {
     chunks: options.chunks,
     hash: options.hash === true ? 'md5' : options.hash,
@@ -120,12 +123,12 @@ function processArgs(_url, outputFile, options) {
             variables: {
               bars: ({total}) =>
                 (Number.isFinite(total) && !options.singleBar && chunkStack.length > 1 && chunkStack.length < 20
-                  ? [' •|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', ' •[:{bar}] [:{size}]']
-                  : [` •|:{bar}|${Number.isFinite(total) ? ' [:3{percentage}%]' : ''} [:{speed}] (:{eta}) [:{size}]`]
+                  ? [' •|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', ' •[:{bar}] [:{size}]:{cache}']
+                  : [` •|:{bar}|${Number.isFinite(total) ? ' [:3{percentage}%]' : ''} [:{speed}] (:{eta}) [:{size}]:{cache}`]
                 ).join('\n'),
-              size: (stack, _size, total) => (
-                (total = stack.total), `${stack.size()}${total !== Infinity ? `/:{size:total}` : ''}`
-              ),
+              size: (stack, _size) => `${stack.size()}${stack.total !== Infinity ? `/:{size:total}` : ''}`,
+              cache: options.showCacheUse ? ' {:{cacheRaw}%}' : '',
+              cacheRaw: () => (100 * (cache.getSize() / cache.getCapacity())).toFixed(1),
             },
           },
         ),
@@ -277,11 +280,12 @@ const command = commander
   .option('-f, --overwrite', 'forcefully overwrite existing files')
   .option('--timeout <N>', 'network inactivity timeout (ms)', 10000)
   .option('--no-cache', 'disable in-memory caching')
-  .option('--cache-size <BYTES>', 'max memory capacity for the streaming process (default: 209715200 (200 MiB))')
+  .option('--cache-size <BYTES>', 'max memory capacity for the streaming process (default: 536870912 (512 MiB))')
   .option('--force-append', 'whether or not to force append the downloaded content to the output file')
   .option('--no-directories', "don't create directories")
   .option('--no-bar', "don't show the ProgressBar")
   .option('--pulsate-bar', 'show a pulsating bar')
+  .option('-C, --show-cache-use', 'show cache use in progress bar')
   .option(
     '--single-bar',
     [
