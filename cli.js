@@ -307,6 +307,7 @@ const command = commander
   .option('--no-bar', "don't show the ProgressBar")
   .option('--pulsate-bar', 'show a pulsating bar')
   .option('-C, --show-cache-use', 'show cache use in progress bar')
+  .option('--raw-sizes', 'show sizes as raw bytes instead of human-readable')
   .option(
     '--single-bar',
     [
