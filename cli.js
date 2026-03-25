@@ -295,7 +295,7 @@ const command = commander
   )
   .option('-D, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
   .option('-f, --overwrite', 'forcefully overwrite existing files')
-  .option('--timeout <N>', 'network inactivity timeout (ms)', 10000)
+  .option('--timeout <N>', 'network inactivity timeout (ms)', 30000)
   .option('--no-cache', 'disable in-memory caching')
   .option('--cache-size <BYTES>', 'max memory capacity for the streaming process (default: 536870912 (512 MiB))')
   .option('--force-append', 'whether or not to force append the downloaded content to the output file')
