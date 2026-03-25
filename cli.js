@@ -100,39 +100,53 @@ function processArgs(_url, outputFile, options) {
     start: options.startPos,
     retries: options.tries,
     auto: false,
-    cacheSize: 'cacheSize' in options ? options.cacheSize : 209715200,
-    cache: options.cache,
+    cache,
+    useCache: options.cache,
   };
 
   const request = xget(_url, opts);
 
   if (options.bar)
     request
-      .with('progressBar', ({size, chunkStack}) =>
-        ProgressBar.stream(
+      .with('progressBar', ({size, chunkStack}) => {
+        let multiBar = Number.isFinite(size) && !options.singleBar && chunkStack.length > 1 && chunkStack.length < 20;
+
+        return ProgressBar.stream(
           size,
           chunkStack.map(chunk => chunk.size),
           {
-            barWriteStream,
-            label: outputFile || '<stdout>',
-            forceFirst: options.singleBar || chunkStack.length > 20,
-            length: 40,
+            keepHeader: false,
+            writeStream: barWriteStream,
+            forceFirst: !multiBar,
+            length: multiBar ? 40 : 30,
             pulsate: options.pulsateBar || !Number.isFinite(size),
-            bar: {separator: '|', header: ''},
-            template: ['[:{label}]', ':{bars}'],
+            bar: {
+              blank: '┅',
+              filler: '━',
+              header: '╸',
+              separator: '┆',
+            },
+            template: multiBar
+              ? [
+                  '  :{color(bold,gray)}┏ :{bar:complete} :{color(gray)}┓:{percentage} :{speed} :{eta}:{color:reset}',
+                  '  :{color(bold,gray)}┗ :{bar} :{color(gray)}┛ :{size}:{cache}:{color:reset}',
+                ]
+              : '  :{color(bold,gray)}[ :{bar} :{color(gray)}]:{percentage} :{speed} :{eta} :{size}:{cache}:{color:reset}',
             variables: {
-              bars: ({total}) =>
-                (Number.isFinite(total) && !options.singleBar && chunkStack.length > 1 && chunkStack.length < 20
-                  ? [' •|:{bar:complete}| [:3{percentage}%] [:{speed}] (:{eta})', ' •[:{bar}] [:{size}]:{cache}']
-                  : [` •|:{bar}|${Number.isFinite(total) ? ' [:3{percentage}%]' : ''} [:{speed}] (:{eta}) [:{size}]:{cache}`]
-                ).join('\n'),
-              size: (stack, _size) => `${stack.size()}${stack.total !== Infinity ? `/:{size:total}` : ''}`,
-              cache: options.showCacheUse ? ' {:{cacheRaw}%}' : '',
+              'color:bar:filled': ':{color(cyan)}',
+              'color:bar:header': ':{color(cyan)}',
+              'color:bar:empty': ':{color(gray)}',
+              'color:bar:separator': ':{color(gray)}',
+              percentage: () => (Number.isFinite(size) ? ' :{color(green)}:3{percentage}%' : ''),
+              speed: () => ':{color(blueBright)}:{speed}',
+              eta: () => ':{color(yellowBright)}:{eta}',
+              size: stack => `:{color(green)}:{size(iec=true)}${stack.total !== Infinity ? `/:{size:total(iec=true)}` : ''}`,
+              cache: options.showCacheUse ? ' :{color(grey)}{:{cacheRaw}%}' : '',
               cacheRaw: () => (100 * (cache.getSize() / cache.getCapacity())).toFixed(1),
             },
           },
-        ),
-      )
+        );
+      })
       .use('progressBar', (dataSlice, store) => store.get('progressBar').next(dataSlice.size));
 
   request
