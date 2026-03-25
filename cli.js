@@ -48,9 +48,11 @@ function getRetryMessage({meta, index, retryCount, maxRetries, bytesRead, totalB
   );
 }
 
-function getEndMessage(request, elapsed) {
+function getEndMessage(request, elapsed, rawSizes) {
+  const pretty = xbytes(request.bytesRead, {iec: true});
+  const size = rawSizes ? `${pretty} (${request.bytesRead})` : pretty;
   return [
-    `Downloaded ${request.bytesRead} (${xbytes(request.bytesRead, {iec: true})}) in ${(elapsed / 1000).toFixed(2)}s`,
+    `Downloaded ${size} in ${(elapsed / 1000).toFixed(2)}s`,
     ...(request.getHash() ? [`Hash(${request.getHashAlgorithm()}): ${request.getHash('hex')}`] : []),
   ];
 }
@@ -155,7 +157,7 @@ function processArgs(_url, outputFile, options) {
       else log(getRetryMessage(data));
     })
     .on('end', () => {
-      const message = getEndMessage(request, Date.now() - startTime);
+      const message = getEndMessage(request, Date.now() - startTime, options.rawSizes);
       if (request.store.has('progressBar')) request.store.get('progressBar').end(message.concat('').join('\n'));
       else log(message.join('\n'));
     })
@@ -253,9 +255,9 @@ function processArgs(_url, outputFile, options) {
     log(
       `Length: ${
         Number.isFinite(totalSize)
-          ? `${hasOffset ? `${totalSize - offset}/` : ''}${totalSize} (${
-              hasOffset ? `${xbytes(totalSize - offset, {iec: true})}/` : ''
-            }${xbytes(totalSize, {iec: true})})`
+          ? `${hasOffset ? `${xbytes(totalSize - offset, {iec: true})}/` : ''}${xbytes(totalSize, {iec: true})}${
+              options.rawSizes ? ` (${hasOffset ? `${totalSize - offset}/` : ''}${totalSize})` : ''
+            }`
           : 'unspecified'
       } ${type ? `[${type}]` : ''}`,
     );
