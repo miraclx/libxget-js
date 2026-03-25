@@ -95,7 +95,7 @@ function processArgs(_url, outputFile, options) {
   let cache = new StreamCache({size: 'cacheSize' in options ? options.cacheSize : 1 << 29});
   const opts = {
     chunks: options.chunks,
-    hash: options.hash === true ? 'md5' : options.hash,
+    hash: options.hash === true ? 'sha256' : options.hash,
     timeout: options.timeout,
     start: options.startPos,
     retries: options.tries,
@@ -289,7 +289,10 @@ const command = commander
   .option('-c, --continue [FILE]', `resume getting a partially downloaded file`)
   .option('-i, --start-pos <OFFSET>', 'start downloading from zero-based position OFFSET', 0)
   .option('-t, --tries <N>', 'set number of retries for each chunk to N. `inf` for infinite', 5)
-  .option('-s, --hash [ALGORITHM]', 'calculate hash sum for the requested content using the specified algorithm (default: md5)')
+  .option(
+    '-s, --hash [ALGORITHM]',
+    'calculate hash sum for the requested content using the specified algorithm (default: sha256)',
+  )
   .option('-D, --directory-prefix <PREFIX>', 'save files to PREFIX/..')
   .option('-f, --overwrite', 'forcefully overwrite existing files')
   .option('--timeout <N>', 'network inactivity timeout (ms)', 10000)
