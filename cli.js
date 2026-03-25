@@ -190,22 +190,23 @@ function processArgs(_url, outputFile, options) {
     const ext = mime.extension(type);
     const {filename} = headers['content-disposition'] ? contentDisposition.parse(headers['content-disposition']).parameters : {};
     let [offset, isSameResumeFile, outputFileExists, outputFileStat] = [start, false, , ,];
-    outputFile = process.stdout.isTTY
-      ? (_path =>
-          path.join(
-            options.directoryPrefix || (path.isAbsolute(_path) ? '/' : '.'),
-            !options.directories ? path.basename(_path) : _path,
-          ))(
-          outputFile ||
-            decodeURIComponent(
-              filename ||
-                parseExt(
-                  parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
-                  `.${ext}` || '.html',
-                ),
-            ),
-        )
-      : null;
+    outputFile =
+      outputFile || process.stdout.isTTY
+        ? (_path =>
+            path.join(
+              options.directoryPrefix || (path.isAbsolute(_path) ? '/' : '.'),
+              !options.directories ? path.basename(_path) : _path,
+            ))(
+            outputFile ||
+              decodeURIComponent(
+                filename ||
+                  parseExt(
+                    parsedUrl.pathname && parsedUrl.pathname === '/' ? `index` : path.basename(parsedUrl.pathname),
+                    `.${ext}` || '.html',
+                  ),
+              ),
+          )
+        : null;
     if (outputFile) ensureWritableFile(outputFile);
     if ((outputFileExists = fs.existsSync(outputFile))) outputFileStat = fs.statSync(outputFile);
     if (options.continue) {
