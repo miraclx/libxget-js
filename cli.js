@@ -288,7 +288,7 @@ const command = commander
   .option('-n, --chunks <N>', 'maximum number of concurrent chunk connections', 5)
   .option('-c, --continue [FILE]', `resume getting a partially downloaded file`)
   .option('-i, --start-pos <OFFSET>', 'start downloading from zero-based position OFFSET', 0)
-  .option('-t, --tries <N>', 'set number of retries for each chunk to N. `inf` for infinite', 5)
+  .option('-t, --tries <N>', 'set number of retries for each chunk to N. `inf` for infinite', 10)
   .option(
     '-s, --hash [ALGORITHM]',
     'calculate hash sum for the requested content using the specified algorithm (default: sha256)',
